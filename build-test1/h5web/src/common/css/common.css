@@ -1,0 +1,67 @@
+@charset "utf-8";
+/* reset */
+html { height: 100%; }
+body { min-height: 100% }
+body { _height: 100% }
+body, div, ul, ol, li, dl, dt, dd, h1, h2, h3, h4, h5, h6, iframe, pre, code, fieldset, legend, form, input, select, textarea, button, p, blockquote, th, td, figure { margin: 0; padding: 0 }
+body, div, ul, ol, li, dl, dt, dd, h1, h2, h3, h4, h5, h6, iframe, pre, code, fieldset, legend, form, p, blockquote, figure, header, footer, nav, article, section, aside, address, figcaption { *zoom: 1 }
+li { list-style-type: none }
+h1, h2, h3, h4, h5, h6 { font-size: 100%; font-weight:normal; }
+iframe, frame, fieldset, img { border: 0 none }
+img { vertical-align: top }
+input[type=button], input[type=submit], input[type=reset] { cursor: pointer }
+input[type="reset"]::-moz-focus-inner,input[type="button"]::-moz-focus-inner,input[type="submit"]::-moz-focus-inner,input[type="file"] > input[type="button"]::-moz-focus-inner{border:none;padding:0;margin:0; }
+button { cursor: pointer }
+input, textarea, button { -webkit-border-radius: 0; -webkit-appearance: none }
+input[type=radio] { -webkit-border-radius: 100%; -webkit-appearance: radio }
+input[type=checkbox] { -webkit-appearance: checkbox }
+input[type=search] { -webkit-box-sizing: content-box; -moz-box-sizing: content-box; -ms-box-sizing: content-box; -o-box-sizing: content-box; box-sizing: content-box }
+textarea { overflow: auto; resize: none }
+blockquote, q { quotes: none }
+blockquote:before, blockquote:after, q:before, q:after { content: ""; content: none }
+table { border-collapse: collapse; border-spacing: 0 }
+caption, th { text-align: left }
+th { font-weight: normal }
+em, cite, address,i { font-style: normal }
+sup { vertical-align: text-top }
+sub { vertical-align: text-bottom }
+body, input, select, button, textarea { color:#333; font-size: 14px; font-family:"Microsoft Yahei","微软雅黑",arial,"\5b8b\4f53";  }
+body { line-height: 1.5 }
+a:link,
+a:visited,
+a:active,
+a { text-decoration: none;}
+a { blr:expression(this.onFocus=this.blur()) }
+a * { *cursor: pointer }
+:focus { outline: none } 
+
+
+.fl{float:left;display:inline;}
+.fr{float:right;display:inline;}
+.prz{position:relative;zoom:1;}
+.pra{position:absolute;}
+.clearfix{*zoom:1;}/*清除浮动*/
+.clearfix:after{content:".";display:block;height:0;visibility:hidden;clear:both;}/*清除浮动兼容*/
+.cleargap{font-size:0;letter-spacing:-8px;text-align:left;}
+.ibox{display:inline-block;*display:inline;*zoom:1;vertical-align:top;font-size:12px;letter-spacing:normal;}
+.justify{text-align:justify!important;text-justify:inter-ideograph!important;}/*文字填充满（两端对齐）*/
+.justify_fix{display:inline-block;*display:inline;*zoom:1;width:100%;height:0;overflow:hidden;}
+.responLayout{overflow:hidden;}/*清除浮动*/
+.layoutItem{padding-bottom:32767px;margin-bottom:-32767px;}/*左右布局时,保证左右两边等高*/
+.usn{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-o-user-select:none;user-select:none;}/*设置文字内容不许用户选中*/
+.fz14{font-size:14px!important}
+.song{font-family:"宋体","\5b8b\4f53";}
+.arial{font-family:Arial}
+
+
+/* clear 页头，页脚，内容区都不用再加清除样式 */
+.fixed:before, .clearfix:before, .cf:before, body:before, .header:before, .main:before, .footer:before { content: ''; display: table }
+.fixed:after, .clearfix:after, .cf:after, after, .header:after, .main:after, .footer:after { content: ''; display: table; clear: both }
+.fixed, .clearfix, .cf, .header, .main, .footer { *zoom: 1 }
+.clear, .cl { display: block!important; float: none!important; clear: both; width: auto!important; max-width: none!important; min-width: 0!important; max-height: none!important; min-height: 0!important; overflow: hidden; margin: 0!important; padding: 0!important; border: 0 none!important; font-size: 0!important; line-height: 0!important }
+
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {opacity:0.5;}
+input:-moz-placeholder, textarea:-moz-placeholder {opacity:0.5;}
+input::-moz-placeholder, textarea::-moz-placeholder { opacity:0.5;}
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {opacity:0.5;}
+
