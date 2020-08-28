@@ -17,11 +17,11 @@
 			<div class="option" style="background: #fff;">
 				<!-- <span class="fl" :class="{ active:optActive == 1}" @click="clickActive(1)">排序<i></i></span> -->
 				<swiper class='search_tab fr' :options="swiperOption_tab">
-					<span v-for="(item,index) in save_list" :key="index" :class="{ on:item.searchID == search_ID}" class="swiper-slide" @click="search_list(index,item.searchID)">{{item.searchName}}</span>
+					<span v-for="(item,index) in save_list" :key="index" :class="{ on:item.searchID == search_ID && item.flag}" class="swiper-slide" @click="search_list(index,item.searchID)">{{item.searchName}}</span>
 				</swiper>
 				<!-- <span v-for="(item,index) in option" :class="{ active:optActive == index+1}" @click="clickActive(index)">{{item}}<i></i></span> -->
-				<span class="fl active" v-if="optActive != 2" @click="clickActive(2)">展开筛选</span>
-				<span class="fl active" v-if="optActive == 2" @click="clickActive(2)">收起筛选</span>
+				<span class="fl active filter" v-if="optActive != 2" @click="clickActive(2)">筛选</span>
+				<span class="fl active filter" v-if="optActive == 2" @click="clickActive(2)">筛选</span>
 				<div class="clear"></div>
 			</div>
 			<!-- <div v-show="optActive == 1" class="option_screen">
@@ -42,112 +42,6 @@
 				</div>
 				<i @click="hiddenTab"></i>
 			</div> -->
-			<div v-show="optActive == 2" class="option_screen slide">
-
-				<div class="opt_con" @scroll="hidSee">
-					<div class="opt_botl">
-						<p class="save_title">类型:</p>
-						<span v-for="(item,index) in lx_items_list" :key="index" :class="{'active':item.flag,'yellow':item.color=='yellow','green':item.color=='green'}" @click="addparams(item.filter,item.value,index,1)">{{item.name}}</span>
-					</div>
-					<div class="opt_botl">
-						<p class="save_title">颜色级:</p>
-						<span v-for="(item,index) in ysj_items_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,2)">{{item.name}}</span>
-					</div>
-					<div class="opt_botl">
-						<p class="save_title">存放地:</p>
-						<span v-for="(item,index) in address_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,3)">{{item.name}}</span>
-					</div>
-
-					<div class="opt_cla opt_botl">
-						<p class="bt fl">棉花类型：</p>
-						<div class="cla_btn fl">
-							<span v-for="(item,index) in mhlx_items_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,4)">{{item.name}}</span>
-						</div>
-						<div class="clear"></div>
-					</div>
-					<div class="opt_cla opt_botl">
-						<p class="bt fl">年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度：</p>
-						<div class="cla_btn fl">
-							<span v-for="(item,index) in Data_list"  :key="index":class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,5)">{{item.name}}</span>
-						</div>
-						<div class="clear"></div>
-					</div>
-					<div class="opt_slide">
-						<p class="slide_bt fl">长度</p>
-						<div class="block slide_block fl" @touchstart="showtool('show1')" @touchend="addparams">
-							<el-slider v-model="value" range :min="250" :max="400" :marks="marks" :format-tooltip="formatTooltip"
-							 :show-tooltip="isSee1">
-							</el-slider>
-						</div>
-						<div class="clear"></div>
-					</div>
-					<div class="opt_slide">
-						<p class="slide_bt fl">强力</p>
-						<div class="block slide_block fl" @touchstart="showtool('show2')" @touchend="addparams">
-							<el-slider v-model="value2" range :min="210" :max="400" :marks="marks2" :format-tooltip="formatTooltip"
-							 :show-tooltip="isSee2">
-							</el-slider>
-						</div>
-						<div class="clear"></div>
-					</div>
-					<div class="opt_slide">
-						<p class="slide_bt fl">马值</p>
-						<div class="block slide_block fl" @touchstart="showtool('show3')" @touchend="addparams">
-							<el-slider v-model="value3" range :min="20" :max="65" :marks="marks3" :format-tooltip="formatTooltip"
-							 :show-tooltip="isSee3">
-							</el-slider>
-						</div>
-						<div class="clear"></div>
-					</div>
-					<div class="opt_slide">
-						<p class="slide_bt fl">含杂</p>
-						<div class="block slide_block fl" @touchstart="showtool('show4')" @touchend="addparams">
-							<el-slider v-model="value4" range :min="0" :max="60" :marks="marks4" :format-tooltip="formatTooltip"
-							 :show-tooltip="isSee4">
-							</el-slider>
-						</div>
-						<div class="clear"></div>
-					</div>
-					<div class="opt_slide">
-						<p class="slide_bt fl">回潮</p>
-						<div class="block slide_block fl" @touchstart="showtool('show5')" @touchend="addparams">
-							<el-slider v-model="value5" range :min="0" :max="150" :marks="marks5" :format-tooltip="formatTooltip"
-							 :show-tooltip="isSee5">
-							</el-slider>
-						</div>
-						<div class="clear"></div>
-					</div>
-					<div class="opt_slide dan">
-						<p class="slide_bt fl">整齐度</p>
-						<div class="block slide_block fl" @touchstart="showtool('show6')" @touchend="addparams">
-							<el-slider v-model="value6" range :min="700" :max="1000" :marks="marks6" :format-tooltip="formatTooltip"
-							 :show-tooltip="isSee6">
-							</el-slider>
-						</div>
-						<div class="clear"></div>
-					</div>
-					<!-- <div class="opt_slide">
-						<p class="slide_bt fl">长度整齐度</p>
-						<div class="block slide_block fl">
-							<el-slider v-model="value6" range :min="77" :max="99" :show-tooltip="isSee">
-							</el-slider>
-						</div>
-						<div class="clear"></div>
-					</div> -->
-				</div>
-				<div class="slide_click">
-					<!-- <input class="chongzhi" type="button" value="点击重置" @click="clearSelect"> -->
-					<input class="wancheng" id="wancheng" type="button" value="确定筛选" @click="addparams('noshow')">
-					<input class="chongzhi" type="button" value="添加到定制需求" @click="save_top">
-				</div>
-				<i @click="hiddenTab"></i>
-			</div>
-			<div v-show="optActive == 1" class="option_screen">
-				<div class="opt_con">
-					<span v-for="(item,index) in order_items_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index)">{{item.name}}</span>
-				</div>
-				<i @click="hiddenTab"></i>
-			</div>
 		</div>
 		<div class="ware_list warehouseList">
 			<ul>
@@ -169,12 +63,12 @@
 						</div>
 						<div class="res_con" @click="godetails(item.batchID,item.listingID)">
 							<div><span class="num">{{item.primaryColorName}}</span></div><i></i>
-							<div><span class="title">长度</span></br><span class="num">{{item.lengthAvg}}</span></div><i></i>
-							<div><span class="title">强力</span></br><span class="num">{{item.strongAvg}}</span></div><i></i>
-							<div><span class="title">马值</span></br><span class="num">{{item.mikeAvg}}</span></div><i></i>
-							<div><span class="title">含杂</span></br><span class="num">{{item.impurity}}</span></div><i></i>
-							<div><span class="title">回潮</span></br><span class="num">{{item.moisture}}</span></div><i></i>
-							<div><span class="title">整齐度</span></br><span class="num">{{item.neatAvg}}</span></div>
+							<div><span class="title">长度</span><br> <span class="num">{{item.lengthAvg}}</span></div><i></i>
+							<div><span class="title">强力</span><br><span class="num">{{item.strongAvg}}</span></div><i></i>
+							<div><span class="title">马值</span><br><span class="num">{{item.mikeAvg}}</span></div><i></i>
+							<div><span class="title">含杂</span><br><span class="num">{{item.impurity}}</span></div><i></i>
+							<div><span class="title">回潮</span><br><span class="num">{{item.moisture}}</span></div><i></i>
+							<div><span class="title">整齐度</span><br><span class="num">{{item.neatAvg}}</span></div>
 						</div>
 						<div class="cang" @click="godetails(item.batchID,item.listingID)">
 							<p class="" style="font-size: 0.28rem;">加工企业:{{item.factoryName}}</p>
@@ -243,17 +137,137 @@
 			</div>
 			<div class="share_bg" v-if="shareIF"></div>
 		</div>
+		
+		<div v-show="optActive == 2" class="option_screen slide" ref="transition_right">
+
+			<div class="opt_con" @scroll="hidSee">
+				<div class="opt_botl">
+					<p class="save_title" style="margin-top:0">类型:</p>
+					<span v-for="(item,index) in lx_items_list" :key="index" :class="{'active':item.flag,'yellow':item.color=='yellow','green':item.color=='green'}" @click="addparams(item.filter,item.value,index,1)">{{item.name}}</span>
+				</div>
+				<div class="opt_botl">
+					<p class="save_title">颜色级:</p>
+					<span v-for="(item,index) in ysj_items_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,2)">{{item.name}}</span>
+				</div>
+				<div class="opt_botl" style="padding: 0">
+					<p class="save_title" style="margin-left: .18rem;">存放地:</p>
+					<!-- 城市父级循环不在点击范围 -->
+					<template v-if="address_list.length">
+					<place-of-origin ref="placeOfOrigin" :paramsSidings="paramsSidings" v-model="address_list" :type-num="3" @addparamsCall="addparamsCallplace"></place-of-origin>
+					</template>
+				</div>
+				<div class="opt_botl" style="padding: 0">
+					<p class="save_title" style="margin-left: .18rem;">产地:</p>
+					<!-- 城市父级循环不在点击范围 -->
+					<template v-if="yieldly_list.length">
+					<place-of-origin v-model="yieldly_list" :type-num="6" @addparamsCall="addparamsCallplace"></place-of-origin>
+					</template>
+				</div>
+
+				<div class="opt_cla opt_botl">
+					<p class="bt fl">棉花类型：</p>
+					<div class="cla_btn fl">
+						<span v-for="(item,index) in mhlx_items_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,4)">{{item.name}}</span>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="opt_cla opt_botl">
+					<p class="bt fl">年度：</p>
+					<div class="cla_btn fl">
+						<span v-for="(item,index) in Data_list"  :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,5)">{{item.name}}</span>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="opt_slide">
+					<p class="slide_bt fl">长度</p>
+					<div class="block slide_block fl" @touchstart="showtool('show1')">
+						<el-slider v-model="value" range :min="260" :max="330" :marks="marks" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee1">
+						</el-slider>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="opt_slide">
+					<p class="slide_bt fl">强力</p>
+					<div class="block slide_block fl" @touchstart="showtool('show2')">
+						<el-slider v-model="value2" range :min="240" :max="330" :marks="marks2" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee2">
+						</el-slider>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="opt_slide">
+					<p class="slide_bt fl">马值</p>
+					<div class="block slide_block fl" @touchstart="showtool('show3')">
+						<el-slider v-model="value3" range :min="30" :max="60" :marks="marks3" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee3">
+						</el-slider>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="opt_slide">
+					<p class="slide_bt fl">含杂</p>
+					<div class="block slide_block fl" @touchstart="showtool('show4')">
+						<el-slider v-model="value4" range :min="0" :max="60" :marks="marks4" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee4">
+						</el-slider>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="opt_slide">
+					<p class="slide_bt fl">回潮</p>
+					<div class="block slide_block fl" @touchstart="showtool('show5')">
+						<el-slider v-model="value5" range :min="40" :max="110" :marks="marks5" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee5">
+						</el-slider>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="opt_slide dan">
+					<p class="slide_bt fl">整齐度</p>
+					<div class="block slide_block fl" @touchstart="showtool('show6')">
+						<el-slider v-model="value6" range :min="780" :max="900" :marks="marks6" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee6">
+						</el-slider>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<!-- <div class="opt_slide">
+					<p class="slide_bt fl">长度整齐度</p>
+					<div class="block slide_block fl">
+						<el-slider v-model="value6" range :min="77" :max="99" :show-tooltip="isSee">
+						</el-slider>
+					</div>
+					<div class="clear"></div>
+				</div> -->
+			</div>
+			<div class="slide_click">
+				<!-- <input class="chongzhi" type="button" value="点击重置" @click="clearSelect"> -->
+				<input class="wancheng" id="wancheng" type="button" value="确定筛选" @click="addparams('noshow')">
+				<input class="chongzhi" type="button" value="添加到需求定制" @click="save_top">
+			</div>
+			<i @click="hiddenTab"></i>
+		</div>
+		<div v-show="optActive == 1" class="option_screen">
+			<div class="opt_con">
+				<span v-for="(item,index) in order_items_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index)">{{item.name}}</span>
+			</div>
+			<i @click="hiddenTab"></i>
+		</div>
+
 		<img class="share_zhi" v-if="share_zhiIF" @click="share_zhiIF=false" src="../../assets/img/share_zhi.png" alt="">
 	</div>
 </template>
 
 <script>
-	// import wx from 'weixin-js-sdk'
+  // import wx from 'weixin-js-sdk'
+  import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
 	import Search from '@/components/search.vue'
 	// import warehouseList from '@/components/warehouse/warehouseList.vue'
 	export default {
 		components: {
-			Search,
+      Search,
+      PlaceOfOrigin
 			// warehouseList
 		},
 		data: function() {
@@ -262,6 +276,7 @@
 				option: ['类型', '颜色级', '存放地', '更多', '排序', ],
 				optActive: '',
 				warehouseList: '',
+				paramsSidings: 0,
 				importList:'',
 				loading: true,
 				ifAsc: true,
@@ -273,6 +288,8 @@
 				isSee5: false,
 				isSee6: false,
 				search_ID:'',
+				// 点击需求name之后进入详情存储数据
+				searchName: '',
 				lx_items_list: [{
 						id: 0,
 						name: '不限',
@@ -282,64 +299,21 @@
 					},
 					// { id: 11, name: '棉联优选', flag: false, filter: 'optimization', value: 1 } , 
 					{ id: 1, name: '棉联优选', flag: false, filter: 'listingType', value: 1 ,color:'green',}, 
-					{ id: 2, name: '店铺自营', flag: false, filter: 'listingType', value: 0 ,color:'green',},
-					
+					{ id: 2, name: '店铺资源', flag: false, filter: 'listingType', value: 0 ,color:'green',},
 					{
 						id: 3,
-						name: '点价资源',
+						name: '固定价',
+						flag: false,
+						filter: 'pricing',
+						value: 'true',
+						color:'yellow',
+					}, {
+						id: 4,
+						name: '点价',
 						flag: false,
 						filter: 'listingIndex',
 						value: 'true',
 						color:'yellow',
-					}, {
-						id: 4,		
-						name: '双28',
-						flag: false,
-						filter: 'd28',
-						value: 1,
-						color:'green',
-					}, {
-						id: 5,
-						name: '双29',
-						flag: false,
-						filter: 'd29',
-						value: 1,
-						color:'green',
-					}, {
-						id: 6,
-						name: '新疆棉',
-						flag: false,
-						filter: 'cottonSource',
-						value: 0,
-						color:'yellow',
-					}, {
-						id: 7,
-						name: '地产棉',
-						flag: false,
-						filter: 'cottonSource',
-						value: 1,
-						color:'yellow',
-					}, {
-						id: 8,
-						name: '进口棉',
-						flag: false,
-						filter: 'cottonSource',
-						value: 2,
-						color:'yellow',
-					}, {
-						id: 9,
-						name: '新疆地方',
-						flag: false,
-						filter: 'cottonSource',
-						value: '01',
-						color:'green',
-					}, {
-						id: 10,
-						name: '新疆兵团',
-						flag: false,
-						filter: 'cottonSource',
-						value: '02',
-						color:'green',
 					}
 				],
 				ysj_items_list: [{
@@ -496,38 +470,35 @@
 					value: 'desc'
 				}],
 				address_list: '',
+				yieldly_list: '',
 				Data_list: '',
-				value: [250, 400],
-				value2: [210, 400],
-				value3: [20, 65],
+				value: [260, 330],
+				value2: [240, 330],
+				value3: [30, 60],
 				value4: [0, 60],
-				value5: [0, 150],
-				value6: [700, 1000],
+				value5: [40, 110],
+				value6: [780, 900],
 				// value6: [77, 99],
 				marks: {
-					250: '25',
+					260: '26',
 					280: '28',
-					310: '31',
-					340: '34',
-					370: '37',
-					400: '40',
+					300: '30',
+					320: '32',
+					330: '33',
 				},
 				marks2: {
-					210: '21',
 					240: '24',
-					270: '27',
+					260: '26',
+					280: '28',
 					300: '30',
+					320: '32',
 					330: '33',
-					360: '36',
-					390: '39',
-					400: '40',
 				},
 				marks3: {
-					20: '2',
 					30: '3',
 					40: '4',
 					50: '5',
-					65: '6.5',
+					60: '6',
 				},
 				marks4: {
 					0: '0',
@@ -539,20 +510,23 @@
 					60: '6',
 				},
 				marks5: {
-					0: '0',
-					30: '3',
+					40: '4',
 					60: '6',
-					90: '9',
-					120: '12',
-					150: '15',
+					80: '8',
+					100: '10',
+					110: '11',
 				},
 				marks6: {
-					700: '70',
+					780: '78',
 					800: '80',
+					820: '82',
+					840: '84',
+					860: '86',
+					880: '88',
 					900: '90',
-					1000: '100',
 				},
 				params: '',
+				paramsPart: '',
 				resshow: true,
 
 				slide_btn: '',
@@ -639,21 +613,28 @@
 				console.log(historyID)
 				if(historyID!=''){
 					vm.$nextTick(() => {
-						vm.axios.post('wx/searchhistory/getHistory?searchID=' + historyID).then((response) => {
-							// console.log(response)
-							vm.save_setone = response.entity;
-							if(historyID){
-								vm.search_list(5,historyID);
-							}
-							
-						});
+						vm.axios.post('/wx/searchhistory/list').then((response) => {
+							vm.save_list = response.entity;
+							vm.searchNameAction()
+							vm.axios.post('wx/searchhistory/getHistory?searchID=' + historyID).then((response) => {
+								// console.log(response)
+								vm.save_setone = response.entity;
+								if(historyID){
+									if (vm.save_list.length)
+									vm.search_list('params',historyID);
+									vm.searchNameAction()
+								}
+
+							});
+						})
 					})
 				}else{
 					// vm.$http.post('/wx/listing/getListingList?listingType=' + listingType + '&order=price&asc=asc&listingID='+ids).then((response) => {
-					vm.$http.post('/wx/listing/getListingFineList?order=price&asc=asc&listingID='+ids).then((response) => {
+					vm.$http.post('/wx/listing/getListingFineList?order=price&asc=true&listingID='+ids).then((response) => {
 							vm.warehouseList = response.entity.list;
 							vm.totalPage = response.entity.totalPage;
 							vm.pageCurrent = response.entity.pageCurrent;
+							vm.searchNameAction()
 											// console.log(response);
 							vm.loading = false;
 						if (response.entity.totalRow == 0) {
@@ -662,6 +643,10 @@
 							vm.resshow = false;
 						}
 					});
+					vm.axios.post('/wx/searchhistory/list').then((response) => {
+						vm.save_list = response.entity;
+						vm.searchNameAction()
+					})
 				}
 				vm.$http.get('/wx/shop/getMixListing').then((response) => {
 					// console.log(response);
@@ -683,7 +668,6 @@
 						});
 					});
 				});
-				
 				
 // 				if (searchID == "null") {
 // 					//获取订单列表
@@ -788,23 +772,86 @@
 			})
 		},
 		mounted() {
-			this.$http.post('/wx/searchhistory/list').then((response) => {
-				this.save_list = response.entity;
-				console.log(response)
-			})
+			// this.$http.post('/wx/searchhistory/list').then((response) => {
+			// 	this.save_list = response.entity;
+			// 	this.searchNameAction()
+			// })
 			
 
-			// 获取城市
-			this.$http.post('/wx/bases/getListingCity').then((response) => {
-				this.address_list = response.entity;
-				this.address_list.unshift({
+			// 获取城市 存放地
+			this.$http.get('/wx/bases/list_area?type=DEPOSITARY').then((response) => {
+				let childArr = response.data
+				let NewArr = []
+				if(childArr.length > 0) {
+				childArr.forEach((v, i)=>{
+					v.list.forEach((o, k)=>{
+					o.value = o.name
+					o.flag = false
+					o.filter = 'depositary'
+					if (i == 0) {
+						o.parentId = 1
+						NewArr.push(o)
+					} else if (i == 1) {
+						o.parentId = 2
+						NewArr.push(o)
+					} else {
+						o.parentId = 3
+						NewArr.push(o)
+					}
+					})
+				})
+				}
+				this.address_list = NewArr;
+						this.address_list.unshift({
+							id: 0,
+							name: '不限',
+							flag: true,
+							filter: '',
+							value: ''
+				})
+			});
+			// 获取城市 产地
+			this.$http.get('/wx/bases/list_area?type=ORIGINS').then((response) => {
+				let childArr = response.data
+				let NewArr = []
+				if(childArr.length > 0) {
+				childArr.forEach((v, i)=>{
+						v.list.forEach((o, k)=>{
+						if (o.code == '0') {
+							o.value = o.name
+							o.filter = 'factoryName'
+						} else {
+							o.value = o.code
+							o.filter = 'originsCity'
+						}
+						o.flag = false
+						if (i == 0) {
+							o.parentId = 1
+							NewArr.push(o)
+						} else if (i == 1) {
+							o.parentId = 2
+							NewArr.push(o)
+						} else if (i == 2){
+							if (childArr.length > 3)
+							o.parentId = 4
+							else
+							o.parentId = 3
+							NewArr.push(o)
+						} else if (i == 3) {
+							o.parentId = 3
+							NewArr.push(o)
+						}
+					})
+				})
+				}
+				this.yieldly_list = NewArr;
+				this.yieldly_list.unshift({
 					id: 0,
 					name: '不限',
 					flag: true,
 					filter: '',
 					value: ''
 				})
-				// console.log(this.address_list);
 			});
 			// 获取年份
 			this.$http.post('/wx/bases/getListingData').then((response) => {
@@ -834,7 +881,6 @@
 			GetUrlParam(paraName) {
 			  var url = document.location.toString();
 			  var arrObj = url.split("?");
-			console.log(arrObj.length);
 			
 				var ua = window.navigator.userAgent.toLowerCase();
 				if(ua.match(/MicroMessenger/i) == 'micromessenger'){
@@ -969,19 +1015,39 @@
 
 
 			},
-			search_list(index,searchID) {
+			search_list(index,searchID, flg) {
+				
+				if (!flg)
 				this.search_ID=searchID;
 				this.historyID=searchID;
 				this.loading = true;
 				let params = new URLSearchParams();
 				var save_inx;
-				if(index==5){
-					save_inx = this.save_setone;
-					// console.log(save_inx)
+				if(index=='params'){
+					 save_inx = this.save_setone;
+					 let obj, key
+					 this.save_list.forEach((v, i) => {
+						 if (this.search_ID == v.searchID) {
+							 obj = v
+							 key = i
+						 }
+					 })
+					this.searchName = obj.searchName
+					if (this.search_ID == this.save_list[key].searchID) {
+						this.save_list[key].flag = true
+					} else {
+						this.save_list[key].flag = false
+					}
 				}else{
 					save_inx = this.save_list[index];
+					this.searchName = save_inx.searchName
+					if (this.search_ID == this.save_list[index].searchID) {
+						this.save_list[index].flag = true
+					} else {
+						this.save_list[index].flag = false
+					}
 				}
-				// console.log(save_inx);		
+
 				// 放入参数
 				if (save_inx.optimization) {
 					params.append("optimization", save_inx.optimization);
@@ -989,14 +1055,11 @@
 				if (save_inx.listingType) {
 					params.append("listingType", save_inx.listingType);
 				};
-				if (save_inx.d28) {
-					params.append("d28", save_inx.d28);
-				};
-				if (save_inx.d29) {	
-					params.append("d29", save_inx.d29);
-				};
 				if (save_inx.listingIndex) {
 					params.append("listingIndex", save_inx.listingIndex);
+				};
+				if (save_inx.pricing) {
+					params.append("pricing", save_inx.pricing);
 				};
 				if (save_inx.cottonSource) {
 					params.append("cottonSource", save_inx.cottonSource);
@@ -1006,6 +1069,14 @@
 				};
 				if (save_inx.depositary) {
 					params.append("depositary", save_inx.depositary);
+				};
+				// 产地2
+				if (save_inx.factoryName) {
+					params.append("factoryName", save_inx.factoryName);
+				};
+				// 产地
+				if (save_inx.originsCity) {
+					params.append("originsCity", save_inx.originsCity);
 				};
 				if (save_inx.cottonType) {
 					params.append("cottonType", save_inx.cottonType);
@@ -1054,30 +1125,44 @@
 				if(save_inx.neatMax){
 					params.append("neatMax", save_inx.neatMax);	
 				}
-				
-				
-				this.value=[250, 400];
-				this.value2=[210, 400];
-				this.value3=[20, 65];
+
+				this.paramsSidings = save_inx.sidings
+				params.append("sidings", save_inx.sidings ? save_inx.sidings : '');
+
+				this.value=[260, 330]
+				this.value2=[240, 330];
+				this.value3=[30, 60];
 				this.value4=[0, 60];
-				this.value5=[0, 150];
-				this.value6=[700, 1000];
+				this.value5=[40, 110];
+        		this.value6=[780, 900];
 				
 				
 				this.isSee=false;
 				this.lx_items_list.forEach(function(i){
 					i.flag=false;
 				});
-				this.ysj_items_list.forEach(function(i){
-					i.flag=false;
-				});
-				this.address_list.forEach(function(i){
+				if (this.address_list.length) {
+					this.address_list.forEach(function(i){
+						i.flag=false;
+					});
+					this.$nextTick(() => {
+						this.$refs.placeOfOrigin.updateParamsSidings(save_inx.sidings)
+					})
+				}
+				// 产地
+				if (this.yieldly_list.length)
+				this.yieldly_list.forEach(function(i){
 					i.flag=false;
 				});
 				this.mhlx_items_list.forEach(function(i){
 					i.flag=false;
 				});
+				if (this.Data_list.length)
 				this.Data_list.forEach(function(i){
+					i.flag=false;
+				});
+
+				this.ysj_items_list.forEach(function(i){
 					i.flag=false;
 				});
 				
@@ -1098,10 +1183,7 @@
 					if(save_inx.listingIndex&&this.lx_items_list[i].filter=='listingIndex'){
 						this.lx_items_list[i].flag=true;
 					}
-					if(save_inx.d28==this.lx_items_list[i].value&&this.lx_items_list[i].filter=='d28'){
-						this.lx_items_list[i].flag=true;
-					}
-					if(save_inx.d29==this.lx_items_list[i].value&&this.lx_items_list[i].filter=='d29'){
+					if(save_inx.pricing&&this.lx_items_list[i].filter=='pricing'){
 						this.lx_items_list[i].flag=true;
 					}
 					// console.log(save_inx);
@@ -1119,7 +1201,7 @@
 				for(var i=0;i<this.ysj_items_list.length;i++){
 					if(save_inx.primaryColor){
 						for(var x=0;x<save_inx.primaryColor.length;x++){
-							if(this.ysj_items_list[i].value==save_inx.primaryColor.split(',')[x]){
+							if(this.ysj_items_list[i].value==save_inx.primaryColor.split(',')[x] && this.ysj_items_list[i].filter == 'primaryColor'){
 								this.ysj_items_list[i].flag=true;
 							}
 						}
@@ -1137,11 +1219,33 @@
 					}
 					
 				}
+				// 产地
+				for(var i=0;i<this.yieldly_list.length;i++){
+					if(save_inx.originsCity){
+						for(var x=0;x<save_inx.originsCity.length;x++){
+							if(this.yieldly_list[i].value==save_inx.originsCity.split(',')[x]){
+								this.yieldly_list[i].flag=true;
+							}
+						}
+					}
+					
+				}
+				// 产地2
+				for(var i=0;i<this.yieldly_list.length;i++){
+					if(save_inx.originsCity){
+						for(var x=0;x<save_inx.factoryName.length;x++){
+							if(this.yieldly_list[i].value==save_inx.factoryName.split(',')[x]){
+								this.yieldly_list[i].flag=true;
+							}
+						}
+					}
+					
+				}
 				// 棉花类型
 				for(var i=0;i<this.mhlx_items_list.length;i++){
 					if(save_inx.cottonType){
 						for(var x=0;x<save_inx.cottonType.length;x++){
-							if(this.mhlx_items_list[i].value==save_inx.cottonType.split(',')[x]){
+							if(this.mhlx_items_list[i].value==save_inx.cottonType.split(',')[x] && this.mhlx_items_list[i].filter == 'cottonType'){
 								this.mhlx_items_list[i].flag=true;
 							}
 						}
@@ -1152,7 +1256,7 @@
 				for(var i=0;i<this.mhlx_items_list.length;i++){
 					if(save_inx.packType){
 						for(var x=0;x<save_inx.packType.length;x++){
-							if(this.mhlx_items_list[i].value==save_inx.packType.split(',')[x]){
+							if(this.mhlx_items_list[i].value==save_inx.packType.split(',')[x] && this.mhlx_items_list[i].filter == 'packType'){
 								this.mhlx_items_list[i].flag=true;
 							}
 						}
@@ -1173,30 +1277,30 @@
 				if(save_inx.lengthMin!=null&&save_inx.lengthMax!=null){
 					this.value=[save_inx.lengthMin*10, save_inx.lengthMax*10];
 				} else if(save_inx.lengthMin==null&&save_inx.lengthMax!=null){
-					this.value=[250, save_inx.lengthMax*10];
+					this.value=[260, save_inx.lengthMax*10];
 				} else if(save_inx.lengthMin!=null&&save_inx.lengthMax==null){
-					this.value=[save_inx.lengthMin*10, 400];
+					this.value=[save_inx.lengthMin*10, 330];
 				} else if(save_inx.lengthMin==null&&save_inx.lengthMax==null){
-					this.value=[250, 400];
+					this.value=[260, 330];
 				}
 					
 				if(save_inx.strongMin!=null&&save_inx.strongMax!=null){
 					this.value2=[save_inx.strongMin*10, save_inx.strongMax*10];
 				} else if(save_inx.strongMin==null&&save_inx.strongMax!=null){
-					this.value2=[210, save_inx.strongMax*10];
+					this.value2=[240, save_inx.strongMax*10];
 				} else if(save_inx.strongMin!=null&&save_inx.strongMax==null){
-					this.value2=[save_inx.strongMin*10, 400];
+					this.value2=[save_inx.strongMin*10, 330];
 				} else if(save_inx.strongMin==null&&save_inx.strongMax==null){
-					this.value2=[210, 400];
+					this.value2=[210, 330];
 				}
 				if(save_inx.mikeMin!=null&&save_inx.mikeMax!=null){
 					this.value3=[save_inx.mikeMin*10, save_inx.mikeMax*10];
 				} else if(save_inx.mikeMin==null&&save_inx.mikeMax!=null){
-					this.value3=[20, save_inx.mikeMax*10];
+					this.value3=[30, save_inx.mikeMax*10];
 				} else if(save_inx.mikeMin!=null&&save_inx.mikeMax==null){
-					this.value3=[save_inx.mikeMin*10, 65];
+					this.value3=[save_inx.mikeMin*10, 60];
 				} else if(save_inx.mikeMin==null&&save_inx.mikeMax==null){
-					this.value3=[20, 65];
+					this.value3=[30, 60];
 				}
 				if(save_inx.impurityMin!=null&&save_inx.impurityMax!=null){
 					this.value4=[save_inx.impurityMin*10, save_inx.impurityMax*10];
@@ -1210,25 +1314,25 @@
 				if(save_inx.moistureMin!=null&&save_inx.moistureMax!=null){
 					this.value5=[save_inx.moistureMin*10, save_inx.moistureMax*10];
 				} else if(save_inx.moistureMin==null&&save_inx.moistureMax!=null){
-					this.value5=[0, save_inx.moistureMax*10];
+					this.value5=[40, save_inx.moistureMax*10];
 				} else if(save_inx.moistureMin!=null&&save_inx.moistureMax==null){
-					this.value5=[save_inx.moistureMin*10, 150];
+					this.value5=[save_inx.moistureMin*10, 110];
 				} else if(save_inx.moistureMin==null&&save_inx.moistureMax==null){
-					this.value5=[0, 150];
+					this.value5=[40, 110];
 				}
 				if(save_inx.neatMin!=null&&save_inx.neatMax!=null){
 					this.value6=[save_inx.neatMin*10, save_inx.neatMax*10];
 				} else if(save_inx.neatMin==null&&save_inx.neatMax!=null){
-					this.value6=[700, save_inx.neatMax*10];
+					this.value6=[780, save_inx.neatMax*10];
 				} else if(save_inx.neatMin!=null&&save_inx.neatMax==null){
-					this.value6=[save_inx.neatMin*10, 1000];
+					this.value6=[save_inx.neatMin*10, 900];
 				} else if(save_inx.neatMin==null&&save_inx.neatMax==null){
-					this.value6=[700, 1000];
+					this.value6=[780, 900];
 				}
 				
-				
+				this.paramsPart = params
 				// this.$http.post('/wx/listing/getListingList?' + params + '&order=price&asc=asc').then((response) => {
-				this.$http.post('/wx/listing/getListingFineList?' + params + '&order=price&asc=asc').then((response) => {
+				this.$http.post('/wx/listing/getListingFineList?' + params + '&order=price&asc=true' ).then((response) => {
 					this.warehouseList = response.entity.list;
 					this.totalPage = response.entity.totalPage;
 					this.pageCurrent = 1;
@@ -1263,12 +1367,12 @@
 			},
 			//重置
 			clearSelect() {
-				this.value = [260, 310];
-				this.value2 = [260, 310];
-				this.value3 = [0, 60];
-				this.value4 = [0, 50];
-				this.value5 = [40, 110];
-				this.value6 = [700, 1000];
+				this.value=[260, 330]
+				this.value2=[240, 330];
+				this.value3=[30, 60];
+				this.value4=[0, 60];
+				this.value5=[40, 110];
+				this.value6=[780, 900];
 				this.isSee = false;
 				this.mhlx_items_list.forEach(function(i) {
 					i.flag = false;
@@ -1296,7 +1400,7 @@
 						// 	this.pageflag=true;
 						// })
 
-						this.$http.post('/wx/listing/getListingFineList?' + this.paramsBoth + '&pageNum=' + this.pageNum + '&order=price&asc=asc').then((response) => {
+						this.$http.post('/wx/listing/getListingFineList?' + this.paramsBoth + '&pageNum=' + this.pageNum + '&order=price&asc=true').then((response) => {
 							let ListTest = response.entity.list;
 							this.warehouseList = this.warehouseList.concat(ListTest);
 							this.totalPage = response.entity.totalPage;
@@ -1316,6 +1420,10 @@
 			},
 			//前往资源详情
 			godetails(item_, listingID_) {
+				if (this.searchName) {
+					window.sessionStorage.setItem('searchName', this.searchName)
+					window.sessionStorage.setItem('searchId', this.search_ID)
+				}
 				this.$router.push({
 					name: 'resDetails',
 					query: {
@@ -1390,6 +1498,7 @@
 							message: '添加询盘成功',
 							type: 'success'
 						});
+						this.getstore('添加询盘成功')
 					} else {
 						if (response.code != 9999) {
 							this.$message({
@@ -1422,6 +1531,7 @@
 							message: '删除询盘成功',
 							type: 'success'
 						});
+						this.getstore()
 					} else {
 						if (response.code != 9999) {
 							this.$message({
@@ -1457,7 +1567,7 @@
 				} else {
 					this.optActive = index;
 				};
-
+				this.transitionRight()
 			},
 			// 隐藏tab
 			hiddenTab() {
@@ -1468,6 +1578,17 @@
 				this.isSee4 = false;
 				this.isSee5 = false;
 				this.isSee6 = false;
+				this.transitionRight(true)
+			},
+			transitionRight (type) {
+				let that = this
+				let time = window.setTimeout(()=>{
+					if (type)
+					that.$refs.transition_right.style.width = '0%'
+					else
+					that.$refs.transition_right.style.width = '80%'
+					window.clearTimeout(time)
+				}, 100)
 			},
 			// 显示滑块小标
 			showtool(i) {
@@ -1491,7 +1612,7 @@
 				}
 			},
 			// 传参获取列表
-			addparams(i, value, index, z) {
+			addparams(i, value, index, z, sumStr) {
 				this.search_ID='';
 				// 参数设置
 				let listingType = new Array();
@@ -1499,9 +1620,12 @@
 				let d28;
 				let d29;
 				let listingIndex;
+				let pricing;
 				let cottonSource = new Array();
 				let primaryColor = new Array();
 				let depositary = new Array();
+				let originsCity = new Array();
+				let factoryName = []
 				let cottonType = new Array();
 				let packType = new Array();
 				let sort;
@@ -1518,6 +1642,7 @@
 					this.isSee4 = false;
 					this.isSee5 = false;
 					this.isSee6 = false;
+					this.transitionRight(true)
 				}
 
 				if (this.optActive == 1) {
@@ -1576,6 +1701,17 @@
 					} else if (z == 5) {
 						this.Data_list[index].flag = !this.Data_list[index].flag;
 
+					} else if (z == 6) {
+						// 产地
+						this.yieldly_list[index].flag = !this.yieldly_list[index].flag;
+						if (index == 0) {
+							this.yieldly_list.forEach(function(i) {
+								i.flag = false;
+							})
+							this.yieldly_list[index].flag = true;
+						} else {
+							this.yieldly_list[0].flag = false;
+						}
 					}
 
 				}
@@ -1594,7 +1730,9 @@
 						d29 = 1;
 					} else if (i.filter == 'listingIndex' && i.flag == true) {
 						listingIndex = i.flag;
-					} else if (i.filter == 'cottonSource' && i.flag == true) {
+					} else if (i.filter == 'pricing' && i.flag == true) {
+						pricing = i.flag;
+					}else if (i.filter == 'cottonSource' && i.flag == true) {
 						cottonSource.push(i.value)
 					}
 				});
@@ -1606,6 +1744,18 @@
 				this.address_list.forEach(function(i) {
 					if (i.filter == 'depositary' && i.flag == true) {
 						depositary.push(i.value)
+					}
+				});
+				// 产地
+				this.yieldly_list.forEach(function(i) {
+					if (i.filter == 'originsCity' && i.flag == true) {
+						originsCity.push(i.value)
+					}
+				});
+				// 产地2
+				this.yieldly_list.forEach(function(i) {
+					if (i.filter == 'factoryName' && i.flag == true) {
+						factoryName.push(i.value)
 					}
 				});
 				this.order_items_list.forEach(function(i) {
@@ -1628,11 +1778,15 @@
 						cottonYear.push(i.value)
 					}
 				});
+				// 转换前操作
+
 				// 数组转换成字符串
 				let listingTypeText = listingType.join(",");
 				let cottonSourceText = cottonSource.join(",");
 				let primaryColorText = primaryColor.join(",");
 				let depositaryText = depositary.join(",");
+				let originsCityText = originsCity.join(",");
+				let factoryNameText = factoryName.join(",");
 				let cottonTypeText = cottonType.join(",");
 				let packTypeText = packType.join(",");
 				let cottonYearText = cottonYear.join(",");
@@ -1649,64 +1803,87 @@
 				if (optimization) {
 					params.append("optimization", 1);
 				};
-				if (d28) {
-					params.append("d28", 1);
-				};
-				if (d29) {
-					params.append("d29", 1);
-				};
 				if (listingIndex) {
-					params.append("listingIndex", 2);
+					params.append("listingIndex", 1);
 				};
-				if (cottonSource) {
+				if (pricing) {
+					params.append("pricing", 1);
+				};
+				if (cottonSource.length) {
 					params.append("cottonSource", cottonSourceText);
 				};
-				if (primaryColor) {
+				if (primaryColor.length) {
 					params.append("primaryColor", primaryColorText);
 				};
-				if (depositary) {
+				if (depositary.length) {
 					params.append("depositary", depositaryText);
 				};
-				if (cottonType) {
+				// 产地
+				if (originsCity.length) {
+					params.append("originsCity", originsCityText);
+				};
+				// 产地2
+				if (factoryName.length) {
+					params.append("factoryName", factoryNameText);
+				};
+				if (cottonType.length) {
 					params.append("cottonType", cottonTypeText);
 				};
-				if (packType) {
+				if (packType.length) {
 					params.append("packType", packTypeText);
 				};
-				if (cottonYear) {
+				if (cottonYear.length) {
 					params.append("cottonYear", cottonYearText);
 				};
 
-				if (sort) {
-					params.append("order", sort);
-					params.append("asc", this.asc);
+				params.append("order", sort);
+				params.append("asc", true);
+				params.append('sidings', this.paramsSidings == 1 ? 1 : 0)
+
+				if (this.value[0] != 260 || this.value[1] != 330) {
+					params.append("lengthMin", this.value[0] / 10);
+					params.append("lengthMax", this.value[1] / 10);
 				}
-				params.append("lengthMin", this.value[0] / 10);
-				params.append("lengthMax", this.value[1] / 10);
 
-				params.append("strongMin", this.value2[0] / 10);
-				params.append("strongMax", this.value2[1] / 10);
+				if (this.value2[0] != 240 || this.value2[1] != 330) {
+					params.append("strongMin", this.value2[0] / 10);
+					params.append("strongMax", this.value2[1] / 10);
+				}
 
-				params.append("mikeMin", this.value3[0] / 10);
-				params.append("mikeMax", this.value3[1] / 10);
+				if (this.value3[0] != 30 || this.value3[1] != 60) {
+					params.append("mikeMin", this.value3[0] / 10);
+					params.append("mikeMax", this.value3[1] / 10);
+				}
 
-				params.append("impurityMin", this.value4[0] / 10);
-				params.append("impurityMax", this.value4[1] / 10);
+				if (this.value4[0] != 0 || this.value4[1] != 60) {
+					params.append("impurityMin", this.value4[0] / 10);
+					params.append("impurityMax", this.value4[1] / 10);
+				}
 
-				params.append("moistureMin", this.value5[0] / 10);
-				params.append("moistureMax", this.value5[1] / 10);
+				if (this.value5[0] != 40 || this.value5[1] != 110) {
+					params.append("moistureMin", this.value5[0] / 10);
+					params.append("moistureMax", this.value5[1] / 10);
+				}
 
-				params.append("neatMin", this.value6[0] / 10);
-				params.append("neatMax", this.value6[1] / 10);
+				if (this.value6[0] != 780 || this.value6[1] != 900) {
+					params.append("neatMin", this.value6[0] / 10);
+					params.append("neatMax", this.value6[1] / 10);
+				}
 				// 
 				// 		params.append("neatMin", this.value3[0]);
 				// 		params.append("neatMax", this.value3[1]);
 				// 
 				this.params = params;
+				this.paramsPart = params
 				this.cancelRequest();
 				var that = this;
 				//获取列表信息
-				this.$http.post('/wx/listing/getListingFineList?' + params + '&order=price&asc=asc',null,{
+				this.IfSubmitAjax(params)
+			},
+			IfSubmitAjax (params) {
+				let that = this
+				//获取列表信息
+				this.$http.post('/wx/listing/getListingFineList?' + params,null,{
 					cancelToken: new this.$http.CancelToken(function(c) {
 					          that.source = c;
 					        })
@@ -1731,7 +1908,50 @@
 			      if(typeof this.source ==='function'){
 			        this.source('终止请求')
 			      }
-			    }
+          },
+		// 切换type ActionClass2
+		addparamsCallplace (filter, value, index, typeNum, sumStr) {
+			// 数据重复问题
+			// 产地||存放地不走addparams内部逻辑
+			// if (typeNum == 3)
+			// typeNum = 1111
+			// else if (typeNum == 6)
+			typeNum = 1111
+			if (filter == 'sidings') {
+				value ? this.paramsSidings = 1 : this.paramsSidings = 0
+			}
+			this.addparams(filter, value, index, typeNum, sumStr)
+		},
+		searchNameAction () {
+			// 点击详情是否携带name选项
+			let searchName = window.sessionStorage.getItem('searchName')
+			let searchId = window.sessionStorage.getItem('searchId')
+			if (searchName) {
+				let obj, o
+				this.search_ID = Number(searchId)
+				this.save_list.forEach((v, i) => {
+					if (v.searchName == searchName) {
+						v.flag = true
+						o = i
+					}
+					obj = v
+				})
+				this.search_list(o, obj.searchID, true)
+			}
+		},
+		// 添加询盘计数
+		getstore (type) {
+			// 获取
+			let num = this.$store.getters.OPREATING_INFO_GET('UserEnquiries')
+			// 修改
+			type ? type = 1 : type = -1
+			this.$store.commit({
+				type: 'OPREATING_INFO_SET',
+				UserEnquiries: ( num ? num : 0 ) + type
+			})
+			// 存储
+			this.$store.dispatch('OPREATING_INFO_SET_LOA')
+		}
 		}
 	}
 </script>
@@ -1748,13 +1968,245 @@
 				background: #fff !important;
 			}
 		}
+		.filter{
+			width: auto !important;
+			padding: 0px 0.14rem 0px 0.4rem !important;
+			margin: 0px 0px .04rem !important;
+			font-size: 0.26rem !important;
+			border-radius: 0.08rem !important;
+			line-height: 0.48rem !important;
+			position: relative !important;
+		}
+		.filter:before{
+			content: " ";
+			position: absolute;
+			top: .1rem;
+			left: .08rem;
+			width: .24rem;
+			height: .24rem;
+			background: url('../../assets/icon/filter.png') no-repeat;
+			background-size: 100%;
+		}
+		.slide {
+
+		position: fixed;
+		top: 0;
+		right: 0;
+		width: 0%;
+		height: 100%;
+		z-index: 11111;
+		background: #fff;
+
+			.opt_con {
+				width: 100%;
+				padding-left: 0.3rem;
+			}
+			.opt_botl{border-bottom:1px solid #EAEAEA;padding: 0 .1rem;}
+			.opt_cla {
+				.bt {
+					color: #999999;
+					font-size: 0.3rem;
+					width: 1.6rem;
+					margin-top: 0.1rem;
+					margin-left: 0.08rem;
+				}
+
+				.cla_btn {
+					width: 5.9rem;
+					margin-bottom: 0.2rem;
+
+					span {
+						display: inline-block;
+						padding: 0.1rem 0.12rem;
+						color: #222534;
+						font-size: 0.28rem;
+						border-radius: 0.1rem;
+						margin: 0.1rem;
+						background: #F4F4F4;
+						padding-top: .07rem;
+					}
+
+					span.active {
+						background: #14BAB4;
+						color: #fff;
+					}
+				}
+			}
+
+			.slide_click {
+				background: #fff;
+				width: 100%;
+				padding: 0.5rem 0;
+				text-align: center;
+				z-index: 9999;
+				;
+				position: relative;
+
+				input {
+					color: #ffffff;
+					display: inline-block;
+					border: 0;
+					width: 50%;
+					height: 50px;
+					font-size: .32rem;
+				}
+
+				.chongzhi {
+					background: #fd7320;
+				}
+
+				.wancheng {
+					background: #14bab4;
+				}
+			}
+		}
+
+		.slide {
+			transition: width .22s;
+			-moz-transition: width .22s;	/* Firefox 4 */
+			-webkit-transition: width .22s;	/* Safari 和 Chrome */
+			-o-transition: width .22s;	/* Opera */
+		}
+		.option_screen {
+			.opt_con {
+				background: #fff;
+				width:100%;
+				max-height: calc(100% - 2.2rem);
+				padding-left: 0;
+				overflow-y: scroll;
+				overflow-x: hidden;
+				padding-bottom: 0.5rem;
+				padding-top: 0.2rem;
+
+				span {
+					display: inline-block;
+					padding: 0.07rem 0.12rem;
+					color: #222534;
+					font-size: 0.28rem;
+					border-radius: 0.1rem;
+					margin: 0.1rem;
+					background: #F4F4F4;
+				}
+				.yellow{background: #FFF3CF;color: #FAB500;font-weight: bold;}
+				.green{background: #DBF5F3;color: #13B9B3;font-weight: bold;}
+				span.active {
+					background: #14BAB4;
+					color: #fff;
+				}
+
+				.save_title {
+					color: #999999;
+					font-size: 0.28rem;
+					width: 1.2rem;
+					margin-top: 0.1rem;
+					margin-left: .08rem;
+				}
+			}
+
+			.opt_con::-webkit-scrollbar-track-piece {
+				background-color: #ededed;
+				border-left: 1px solid rgba(0, 0, 0, 0);
+			}
+
+			.opt_con::-webkit-scrollbar {
+				width: 4px;
+				height: 4px;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+			}
+
+			.opt_con::-webkit-scrollbar-thumb {
+				background-color: #14bab4;
+				background-clip: padding-box;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				min-height: 20px;
+			}
+
+			.opt_con::-webkit-scrollbar-thumb:hover {
+				background-color: #14bab4;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+			}
+
+			i {
+				display: block;
+				content: '';
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: #000;
+				z-index: -1;
+				opacity: 0.5;
+			}
+		}
+
+
+		.opt_slide {
+			margin: 0 auto;
+			margin-top: 0.9rem;
+			width: calc(100% - .36rem);
+
+			.slide_bt {
+				font-size: 0.28rem;
+				color: #999999;
+				width: 0.85rem;
+				float: left;
+			}
+
+			.slide_block {
+				width: 77%;
+				margin-left: 0.1rem;
+				margin-top: -0.1rem;
+				float: left;
+				padding: .16rem 0;
+				margin-left: .2rem;
+
+				.el-slider {
+					width: 100%;
+				}
+			}
+
+			.el-slider__runway {
+				height: 0.05rem;
+			}
+
+			.el-slider__bar {
+				background-color: #14bab4;
+				height: 0.05rem;
+			}
+
+			.el-slider__button {
+				border: 0.03rem solid #14bab4;
+				height: 0.24rem;
+				width: 0.24rem;
+			}
+
+			.el-slider__button-wrapper {
+				top: -17px;
+			}
+
+		}
+
+		.opt_slide:nth-child(3) {
+			margin-top: 0.5rem !important;
+		}
+
+
+
 	}
 
 	.search_tab {
-		width: 5.8rem;
+		width: 84%;
 		// background: #14bab4;
 		// height: 0.55rem;
 		line-height: 0.55rem;
+		float: left !important;
 		span {
 			display: block;
 			width: auto !important;
@@ -1876,9 +2328,9 @@
 		position: fixed;
 		top: 1.06rem;
 		background: #fff;
-		z-index:99;
-		width: 7.5rem;
-		padding:0.15rem 0;
+		z-index: 99;
+		width: calc(100% - .5rem);
+		padding: .12rem;
 		.swiper-notification{
 			display: none !important;
 		}
@@ -1888,8 +2340,8 @@
 
 			span {
 				display: block;
-				float: left;
-				width: 1.5rem;
+				float: right;
+				width: 1rem;
 				text-align: center;
 				height: 0.5rem;
 				line-height: 0.5rem;
@@ -1998,8 +2450,8 @@
 			}
 
 			.opt_con::-webkit-scrollbar {
-				width: 12px;
-				height: 13px;
+				width: 4px;
+				height: 4px;
 				-webkit-border-radius: 5px;
 				-moz-border-radius: 5px;
 				border-radius: 5px;
@@ -2011,7 +2463,7 @@
 				-webkit-border-radius: 5px;
 				-moz-border-radius: 5px;
 				border-radius: 5px;
-				min-height: 28px;
+				min-height: 20px;
 			}
 
 			.opt_con::-webkit-scrollbar-thumb:hover {
@@ -2035,72 +2487,6 @@
 			}
 		}
 
-		.slide {
-
-			width: 7.2rem;
-
-			.opt_con {
-				width: 7.2rem;
-				padding-left: 0.3rem;
-			}
-			.opt_botl{border-bottom:1px solid #EAEAEA;}
-			.opt_cla {
-				.bt {
-					color: #999999;
-					font-size: 0.3rem;
-					width: 1.6rem;
-					margin-top: 0.1rem;
-				}
-
-				.cla_btn {
-					width: 5.9rem;
-					margin-bottom: 0.2rem;
-
-					span {
-						color: #333333;
-						font-size: 0.3rem;
-						background: none;
-						margin: 0 0.2rem;
-						padding: 0.1rem 0.1rem;
-						border-radius: 0.03rem;
-					}
-
-					span.active {
-						background: #14BAB4;
-						color: #fff;
-					}
-				}
-			}
-
-			.slide_click {
-				background: #fff;
-				width: 7.5rem;
-				padding: 0.5rem 0;
-				text-align: center;
-				z-index: 9999;
-				;
-				position: relative;
-
-				input {
-					width: 3.25rem;
-					height: 0.66rem;
-					color: #ffffff;
-					font-size: 0.3rem;
-					border: 0;
-					border-radius: 0.5rem;
-					display: inline-block;
-					margin: 0 0.16rem;
-				}
-
-				.chongzhi {
-					background: #fd7320;
-				}
-
-				.wancheng {
-					background: #14bab4;
-				}
-			}
-		}
 
 		.opt_slide {
 			margin-top: 0.9rem;
@@ -2184,7 +2570,6 @@
 		margin-bottom: 3rem;
 	}
 
-	.ware_list>ul {}
 
 	.ware_inx {
 		display: flex;display: -webkit-flex;justify-content: space-between;
@@ -2404,4 +2789,10 @@
 			}
 		}
 	}
+</style>
+
+<style >
+.el-tooltip__popper.is-dark {
+	z-index: 1011101 !important;
+}
 </style>

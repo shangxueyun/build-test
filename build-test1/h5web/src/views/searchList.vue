@@ -13,7 +13,7 @@
 		</div>
 		<div class="search_num" v-if="ishow==1">
 			<ul>
-				<li class="list_inx" v-for="item in numList" @click="godetails(item.batchID)">
+				<li class="list_inx" v-for="item in numList" @click="godetails(item.batchID,item.listingID)">
 					<p class="id">{{item.batchID}}</p>
 					<p class="pihao">批号</p>
 				</li>
@@ -68,12 +68,12 @@
 				}
 			},
 			// 前往详情
-			godetails(item_){
+			godetails(item_,listingID){
 				this.$router.push({
 					name: 'resDetails',
 					query: {
 						id: item_,
-						listingID:'',
+						listingID:listingID,
 						listingType: '',
 					}
 				});

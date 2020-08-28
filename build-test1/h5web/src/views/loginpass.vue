@@ -70,6 +70,8 @@
 					// alert(response)
 					if(response.success){
 						// localStorage.openID = this.mobile;
+						this.$store.dispatch('USER_INFO_GET')
+						this.$store.dispatch('OPREATING_INFO_GET')
 						this.$message({
 						          message: '登录成功',
 						          type: 'success',

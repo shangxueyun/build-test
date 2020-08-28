@@ -5,85 +5,95 @@
 			<p>添加定制需求</p>
 		</div>
 		<div class="addHeight"></div>
-		<div class="option_screen">
+		<div class="option_screen" style="overflow: hidden;">
 			<div class="opt_con" @scroll="hidSee">
 				<div>
 					<p class="save_title">类型:</p>
-					<span v-for="(item,index) in lx_items_list" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,1)">{{item.name}}</span>
+					<span v-for="(item,index) in lx_items_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,1)">{{item.name}}</span>
 				</div>
 				<div>
 					<p class="save_title">颜色级:</p>
-					<span v-for="(item,index) in ysj_items_list" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,2)">{{item.name}}</span>
+					<span v-for="(item,index) in ysj_items_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,2)">{{item.name}}</span>
 				</div>
 				<div>
 					<p class="save_title">存放地:</p>
-					<span v-for="(item,index) in address_list" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,3)">{{item.name}}</span>
+					<!-- 城市父级循环不在点击范围 -->
+					<template v-if="address_list.length">
+						<place-of-origin :paramsSidings="paramsSidings" v-model="address_list" :type-num="3" @addparamsCall="addparamsCallplace"></place-of-origin>
+					</template>
+				</div>
+				<div>
+					<p class="save_title" style="margin-left: .18rem;">产地:</p>
+					<!-- 城市父级循环不在点击范围 -->
+					<template v-if="yieldly_list.length">
+					<place-of-origin ref="placeOfOrigin" v-model="yieldly_list" :type-num="6" @addparamsCall="addparamsCallplace"></place-of-origin>
+					</template>
 				</div>
 			
 				<div class="opt_cla">
 					<p class="bt fl">棉花类型：</p>
 					<div class="cla_btn fl">
-						<span v-for="(item,index) in mhlx_items_list" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,4)">{{item.name}}</span>
+						<span v-for="(item,index) in mhlx_items_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,4)">{{item.name}}</span>
 					</div>
 					<div class="clear"></div>
 				</div>
 				<div class="opt_cla">
-					<p class="bt fl">年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度：</p>
+					<p class="bt fl">年度：</p>
 					<div class="cla_btn fl">
-						<span v-for="(item,index) in Data_list" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,5)">{{item.name}}</span>
+						<span v-for="(item,index) in Data_list" :key="index" :class="{'active':item.flag}" @click="addparams(item.filter,item.value,index,5)">{{item.name}}</span>
 					</div>
 					<div class="clear"></div>
 				</div>
 				<div class="opt_slide">
 					<p class="slide_bt fl">长度</p>
-					<div class="block slide_block fl" @touchstart="showtool('show1')" @touchend="addparams">
-						<el-slider v-model="value" range :min="250" :max="400" :marks="marks" :format-tooltip="formatTooltip"
-						 :show-tooltip="isSee1">
+					<div class="block slide_block fl" @touchstart="showtool('show1')">
+						<el-slider v-model="value" range :min="260" :max="330" :marks="marks" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee1">
 						</el-slider>
 					</div>
 					<div class="clear"></div>
 				</div>
 				<div class="opt_slide">
 					<p class="slide_bt fl">强力</p>
-					<div class="block slide_block fl" @touchstart="showtool('show2')" @touchend="addparams">
-						<el-slider v-model="value2" range :min="210" :max="400" :marks="marks2" :format-tooltip="formatTooltip"
-						 :show-tooltip="isSee2">
+					<div class="block slide_block fl" @touchstart="showtool('show2')">
+						<el-slider v-model="value2" range :min="240" :max="330" :marks="marks2" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee2">
 						</el-slider>
 					</div>
 					<div class="clear"></div>
 				</div>
 				<div class="opt_slide">
 					<p class="slide_bt fl">马值</p>
-					<div class="block slide_block fl" @touchstart="showtool('show3')" @touchend="addparams">
-						<el-slider v-model="value3" range :min="20" :max="65" :marks="marks3" :format-tooltip="formatTooltip"
-						 :show-tooltip="isSee3">
+					<div class="block slide_block fl" @touchstart="showtool('show3')">
+						<el-slider v-model="value3" range :min="30" :max="60" :marks="marks3" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee3">
 						</el-slider>
 					</div>
 					<div class="clear"></div>
 				</div>
 				<div class="opt_slide">
 					<p class="slide_bt fl">含杂</p>
-					<div class="block slide_block fl" @touchstart="showtool('show4')" @touchend="addparams">
-						<el-slider v-model="value4" range :min="0" :max="60" :marks="marks4" :format-tooltip="formatTooltip"
-						 :show-tooltip="isSee4">
+					<div class="block slide_block fl" @touchstart="showtool('show4')">
+						<el-slider v-model="value4" range :min="0" :max="60" :marks="marks4" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee4">
 						</el-slider>
 					</div>
 					<div class="clear"></div>
 				</div>
 				<div class="opt_slide">
 					<p class="slide_bt fl">回潮</p>
-					<div class="block slide_block fl" @touchstart="showtool('show5')" @touchend="addparams">
-						<el-slider v-model="value5" range :min="0" :max="150" :marks="marks5" :format-tooltip="formatTooltip"
-						 :show-tooltip="isSee5">
+					<div class="block slide_block fl" @touchstart="showtool('show5')">
+						<el-slider v-model="value5" range :min="40" :max="110" :marks="marks5" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee5">
 						</el-slider>
 					</div>
 					<div class="clear"></div>
 				</div>
-				<div class="opt_slide dan">
+				<div class="opt_slide">
 					<p class="slide_bt fl">整齐度</p>
-					<div class="block slide_block fl" @touchstart="showtool('show6')" @touchend="addparams">
-						<el-slider v-model="value6" range :min="700" :max="1000" :marks="marks6" :format-tooltip="formatTooltip"
-						 :show-tooltip="isSee6">
+					<div class="block slide_block fl" @touchstart="showtool('show6')">
+						<el-slider v-model="value6" range :min="780" :max="900" :marks="marks6" @change="addparams" :format-tooltip="formatTooltip"
+							:show-tooltip="isSee6">
 						</el-slider>
 					</div>
 					<div class="clear"></div>
@@ -118,12 +128,17 @@
 </template>
 
 <script>
-	export default{
+import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
+	export default {
+    components : {
+			PlaceOfOrigin
+		},
 		data:function(){
 			return{
 				customizedList:'',
 				optActive: '',
 				warehouseList: '',
+				paramsSidings: null,
 				loading: true,
 				ifAsc: true,
 				asc: 'desc',
@@ -138,56 +153,25 @@
 						name: '不限',
 						flag: true,
 						filter: '',
-						value: ''
-					}, /* { id: 1, name: '自营', flag: false, filter: 'listingType', value: 1 }, { id: 2, name: '非自营', flag: false, filter: 'listingType', value: 0 },*/
+						value: '',
+					},
+					// { id: 11, name: '棉联优选', flag: false, filter: 'optimization', value: 1 } , 
+					{ id: 1, name: '棉联优选', flag: false, filter: 'listingType', value: 1 ,color:'green',}, 
+					{ id: 2, name: '店铺资源', flag: false, filter: 'listingType', value: 0 ,color:'green',},
 					{
 						id: 3,
-						name: '点价资源',
+						name: '固定价',
 						flag: false,
-						filter: 'listingIndex',
-						value: 'true'
+						filter: 'pricing',
+						value: 'true',
+						color:'yellow',
 					}, {
 						id: 4,
-						name: '双28',
+						name: '点价',
 						flag: false,
-						filter: 'd28',
-						value: 1
-					}, {
-						id: 5,
-						name: '双29',
-						flag: false,
-						filter: 'd29',
-						value: 1
-					}, {
-						id: 6,
-						name: '新疆棉',
-						flag: false,
-						filter: 'cottonSource',
-						value: 0
-					}, {
-						id: 7,
-						name: '地产棉',
-						flag: false,
-						filter: 'cottonSource',
-						value: 1
-					}, {
-						id: 8,
-						name: '进口棉',
-						flag: false,
-						filter: 'cottonSource',
-						value: 2
-					}, {
-						id: 9,
-						name: '新疆地方',
-						flag: false,
-						filter: 'cottonSource',
-						value: '01'
-					}, {
-						id: 10,
-						name: '新疆兵团',
-						flag: false,
-						filter: 'cottonSource',
-						value: '02'
+						filter: 'listingIndex',
+						value: 'true',
+						color:'yellow',
 					}
 				],
 				ysj_items_list: [{
@@ -344,38 +328,35 @@
 					value: 'desc'
 				}],
 				address_list: '',
+				yieldly_list: '',
 				Data_list: '',
-				value: [250, 400],
-				value2: [210, 400],
-				value3: [20, 65],
+				value: [260, 330],
+				value2: [240, 330],
+				value3: [30, 60],
 				value4: [0, 60],
-				value5: [0, 150],
-				value6: [700, 1000],
+				value5: [40, 110],
+				value6: [780, 900],
 				// value6: [77, 99],
 				marks: {
-					250: '25',
+					260: '26',
 					280: '28',
-					310: '31',
-					340: '34',
-					370: '37',
-					400: '40',
+					300: '30',
+					320: '32',
+					330: '33',
 				},
 				marks2: {
-					210: '21',
 					240: '24',
-					270: '27',
+					260: '26',
+					280: '28',
 					300: '30',
+					320: '32',
 					330: '33',
-					360: '36',
-					390: '39',
-					400: '40',
 				},
 				marks3: {
-					20: '2',
 					30: '3',
 					40: '4',
 					50: '5',
-					65: '6.5',
+					60: '6',
 				},
 				marks4: {
 					0: '0',
@@ -387,18 +368,20 @@
 					60: '6',
 				},
 				marks5: {
-					0: '0',
-					30: '3',
+					40: '4',
 					60: '6',
-					90: '9',
-					120: '12',
-					150: '15',
+					80: '8',
+					100: '10',
+					110: '11',
 				},
 				marks6: {
-					700: '70',
+					780: '78',
 					800: '80',
+					820: '82',
+					840: '84',
+					860: '86',
+					880: '88',
 					900: '90',
-					1000: '100',
 				},
 				params: '',
 				resshow: true,
@@ -426,17 +409,81 @@
 				
 			});
 			
-			// 获取城市
-			this.$http.post('/wx/bases/getListingCity').then((response) => {
-				this.address_list = response.entity;
-				this.address_list.unshift({
+			// 获取城市 存放地
+			this.$http.get('/wx/bases/list_area?type=DEPOSITARY').then((response) => {
+				let childArr = response.data
+				let NewArr = []
+				if(childArr.length > 0) {
+				childArr.forEach((v, i)=>{
+					v.list.forEach((o, k)=>{
+					o.value = o.name
+					o.flag = false
+					o.filter = 'depositary'
+					if (i == 0) {
+						o.parentId = 1
+						NewArr.push(o)
+					} else if (i == 1) {
+						o.parentId = 2
+						NewArr.push(o)
+					} else {
+						o.parentId = 3
+						NewArr.push(o)
+					}
+					})
+				})
+				}
+				this.address_list = NewArr;
+					this.address_list.unshift({
+						id: 0,
+						name: '不限',
+						flag: true,
+						filter: '',
+						value: ''
+					})
+				// console.log(this.address_list);
+			});
+			// 获取城市 产地
+			this.$http.get('/wx/bases/list_area?type=ORIGINS').then((response) => {
+				let childArr = response.data
+				let NewArr = []
+				if(childArr.length > 0) {
+				childArr.forEach((v, i)=>{
+						v.list.forEach((o, k)=>{
+						if (o.code == '0') {
+							o.value = o.name
+							o.filter = 'factoryName'
+						} else {
+							o.value = o.code
+							o.filter = 'originsCity'
+						}
+						o.flag = false
+						if (i == 0) {
+							o.parentId = 1
+							NewArr.push(o)
+						} else if (i == 1) {
+							o.parentId = 2
+							NewArr.push(o)
+						} else if (i == 2){
+							if (childArr.length > 3)
+							o.parentId = 4
+							else
+							o.parentId = 3
+							NewArr.push(o)
+						} else if (i == 3) {
+							o.parentId = 3
+							NewArr.push(o)
+						}
+					})
+				})
+				}
+				this.yieldly_list = NewArr;
+				this.yieldly_list.unshift({
 					id: 0,
 					name: '不限',
 					flag: true,
 					filter: '',
 					value: ''
 				})
-				// console.log(this.address_list);
 			});
 			// 获取年份
 			this.$http.post('/wx/bases/getListingData').then((response) => {
@@ -492,7 +539,7 @@
 				if (this.saveName) {
 					let save_name = new URLSearchParams();
 					save_name.append("searchName", this.saveName);
-					this.$http.post('/wx/searchhistory/editor?' + this.params + '&' + save_name).then((response) => {
+					this.$http.post('/wx/searchhistory/editor?' + this.params + '&' + save_name + '&order=price&asc=true').then((response) => {
 						// console.log(response);
 						this.save_show = false;
 						this.saveName = '';
@@ -527,14 +574,11 @@
 				if (save_inx.listingType) {
 					params.append("listingType", save_inx.listingType);
 				};
-				if (save_inx.d28) {
-					params.append("d28", save_inx.d28);
-				};
-				if (save_inx.d29) {
-					params.append("d29", save_inx.d29);
-				};
 				if (save_inx.listingIndex) {
 					params.append("listingIndex", save_inx.listingIndex);
+				};
+				if (save_inx.pricing) {
+					params.append("pricing", save_inx.pricing);
 				};
 				if (save_inx.cottonSource) {
 					params.append("cottonSource", save_inx.cottonSource);
@@ -544,6 +588,14 @@
 				};
 				if (save_inx.depositary) {
 					params.append("depositary", save_inx.depositary);
+				};
+				// 产地2
+				if (save_inx.factoryName) {
+					params.append("factoryName", save_inx.factoryName);
+				};
+				// 产地
+				if (save_inx.originsCity) {
+					params.append("originsCity", save_inx.originsCity);
 				};
 				if (save_inx.cottonType) {
 					params.append("cottonType", save_inx.cottonType);
@@ -555,7 +607,9 @@
 					params.append("cottonYear", save_inx.cottonYear);
 				};
 		
-		
+				this.paramsSidings = save_inx.sidings
+				params.append("sidings", save_inx.sidings ? save_inx.sidings : '');
+
 				params.append("lengthMin", save_inx.lengthMin);
 				params.append("lengthMax", save_inx.lengthMax);
 		
@@ -574,7 +628,7 @@
 				params.append("neatMin", save_inx.neatMin);
 				params.append("neatMax", save_inx.neatMax);
 		
-				this.$http.post('/wx/listing/getListingList?' + params).then((response) => {
+				this.$http.post('/wx/listing/getListingList?' + params + '&order=price&asc=true').then((response) => {
 					this.warehouseList = response.entity.list;
 					this.totalPage = response.entity.totalPage;
 					this.pageCurrent = 1;
@@ -609,12 +663,12 @@
 			},
 			//重置
 			clearSelect() {
-				this.value = [250, 400];
-				this.value2 = [210, 400];
-				this.value3 = [20, 65];
-				this.value4 = [0, 60];
-				this.value5 = [0, 150];
-				this.value6 = [700, 1000];
+				this.value=[260, 330]
+				this.value2=[240, 330];
+				this.value3=[30, 60];
+				this.value4=[0, 60];
+				this.value5=[40, 110];
+        		this.value6=[780, 900];
 				this.isSee = false;
 				this.mhlx_items_list.forEach(function(i) {
 					i.flag = false;
@@ -663,7 +717,7 @@
 						// 	this.pageflag=true;
 						// })
 		
-						this.$http.post('/wx/listing/getListingList?' + this.paramsBoth + '&pageNum=' + this.pageNum).then((response) => {
+						this.$http.post('/wx/listing/getListingList?' + this.paramsBoth + '&pageNum=' + this.pageNum + '&order=price&asc=true').then((response) => {
 							let ListTest = response.entity.list;
 							this.warehouseList = this.warehouseList.concat(ListTest);
 							this.totalPage = response.entity.totalPage;
@@ -827,14 +881,17 @@
 			// 传参获取列表
 			addparams(i, value, index, z) {
 				// 参数设置
-				
 				let listingType = new Array();
+
 				let d28;
 				let d29;
 				let listingIndex;
+				let pricing;
 				let cottonSource = new Array();
 				let primaryColor = new Array();
 				let depositary = new Array();
+				let factoryName = []
+				let originsCity = new Array();
 				let cottonType = new Array();
 				let packType = new Array();
 				let sort;
@@ -894,6 +951,17 @@
 					} else if (z == 5) {
 						this.Data_list[index].flag = !this.Data_list[index].flag;
 		
+					} else if (z == 6) {
+						// 产地
+						this.yieldly_list[index].flag = !this.yieldly_list[index].flag;
+						if (index == 0) {
+							this.yieldly_list.forEach(function(i) {
+								i.flag = false;
+							})
+							this.yieldly_list[index].flag = true;
+						} else {
+							this.yieldly_list[0].flag = false;
+						}
 					}
 		
 		
@@ -909,6 +977,8 @@
 						d29 = 1;
 					} else if (i.filter == 'listingIndex' && i.flag == true) {
 						listingIndex = i.flag;
+					} else if (i.filter == 'pricing' && i.flag == true) {
+						pricing = i.flag;
 					} else if (i.filter == 'cottonSource' && i.flag == true) {
 						cottonSource.push(i.value)
 					}
@@ -922,6 +992,18 @@
 				this.address_list.forEach(function(i) {
 					if (i.filter == 'depositary' && i.flag == true) {
 						depositary.push(i.value)
+					}
+				});
+				// 产地2
+				this.yieldly_list.forEach(function(i) {
+					if (i.filter == 'factoryName' && i.flag == true) {
+						factoryName.push(i.value)
+					}
+				});
+				// 产地
+				this.yieldly_list.forEach(function(i) {
+					if (i.filter == 'originsCity' && i.flag == true) {
+						originsCity.push(i.value)
 					}
 				});
 				this.order_items_list.forEach(function(i) {
@@ -949,69 +1031,101 @@
 				let cottonSourceText = cottonSource.join(",");
 				let primaryColorText = primaryColor.join(",");
 				let depositaryText = depositary.join(",");
+				let originsCityText = originsCity.join(",");
+				let factoryNameText = factoryName.join(",");
 				let cottonTypeText = cottonType.join(",");
 				let packTypeText = packType.join(",");
 				let cottonYearText = cottonYear.join(",");
 		
 				// 放入参数
 				if (listingType) {
-					params.append("listingType", -1);
-				};
-				if (d28) {
-					params.append("d28", 1);
-				};
-				if (d29) {
-					params.append("d29", 1);
+					listingType.forEach((v, i) => {
+						params.append("listingType", v);
+					})
 				};
 				if (listingIndex) {
-					params.append("listingIndex", 2);
+					params.append("listingIndex", 1);
 				};
-				if (cottonSource) {
+				if (pricing) {
+					params.append("pricing", 1);
+				};
+				if (cottonSource.length) {
 					params.append("cottonSource", cottonSourceText);
 				};
-				if (primaryColor) {
+				if (primaryColor.length) {
 					params.append("primaryColor", primaryColorText);
 				};
-				if (depositary) {
+				if (depositary.length) {
 					params.append("depositary", depositaryText);
 				};
-				if (cottonType) {
+				// 产地
+				if (originsCity.length) {
+					params.append("originsCity", originsCityText);
+				};
+				// 产地2
+				if (factoryName.length) {
+					params.append("factoryName", factoryNameText);
+				};
+				if (cottonType.length) {
 					params.append("cottonType", cottonTypeText);
 				};
-				if (packType) {
+				if (packType.length) {
 					params.append("packType", packTypeText);
 				};
-				if (cottonYear) {
+				if (cottonYear.length) {
 					params.append("cottonYear", cottonYearText);
 				};
 		
-				if (sort) {
-					params.append("order", sort);
-					params.append("asc", this.asc);
+        
+       			params.append('sidings', this.paramsSidings == 1 ? 1 : 0)
+				if (this.value[0] != 260 || this.value[1] != 330) {
+					params.append("lengthMin", this.value[0] / 10);
+					params.append("lengthMax", this.value[1] / 10);
 				}
-				params.append("lengthMin", this.value[0] / 10);
-				params.append("lengthMax", this.value[1] / 10);
-		
-				params.append("strongMin", this.value2[0] / 10);
-				params.append("strongMax", this.value2[1] / 10);
-		
-				params.append("mikeMin", this.value3[0] / 10);
-				params.append("mikeMax", this.value3[1] / 10);
-		
-				params.append("impurityMin", this.value4[0] / 10);
-				params.append("impurityMax", this.value4[1] / 10);
-		
-				params.append("moistureMin", this.value5[0] / 10);
-				params.append("moistureMax", this.value5[1] / 10);
-		
-				params.append("neatMin", this.value6[0] / 10);
-				params.append("neatMax", this.value6[1] / 10);
+
+				if (this.value2[0] != 240 || this.value2[1] != 330) {
+					params.append("strongMin", this.value2[0] / 10);
+					params.append("strongMax", this.value2[1] / 10);
+				}
+
+				if (this.value3[0] != 30 || this.value3[1] != 60) {
+					params.append("mikeMin", this.value3[0] / 10);
+					params.append("mikeMax", this.value3[1] / 10);
+				}
+
+				if (this.value4[0] != 0 || this.value4[1] != 60) {
+					params.append("impurityMin", this.value4[0] / 10);
+					params.append("impurityMax", this.value4[1] / 10);
+				}
+
+				if (this.value5[0] != 40 || this.value5[1] != 110) {
+					params.append("moistureMin", this.value5[0] / 10);
+					params.append("moistureMax", this.value5[1] / 10);
+				}
+
+				if (this.value6[0] != 780 || this.value6[1] != 900) {
+					params.append("neatMin", this.value6[0] / 10);
+					params.append("neatMax", this.value6[1] / 10);
+				}
 				// 
 				this.params = params;
+      },
+      // 切换type ActionClass2
+      addparamsCallplace (filter, value, index, typeNum, sumStr) {
+			// 数据重复问题
+			// 产地||存放地不走addparams内部逻辑
+			// if (typeNum == 3)
+			// typeNum = 1111
+			// else if (typeNum == 6)
+			typeNum = 1111
+			if (filter == 'sidings') {
+				value ? this.paramsSidings = 1 : this.paramsSidings = 0
 			}
+			this.addparams(filter, value, index, typeNum, sumStr)
+      }
 		}
 	}
-</script>H
+</script>
 
 <style lang="scss">
 	.customized{position: relative !important;top: 0 !important;padding-bottom: 2rem;

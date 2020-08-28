@@ -93,6 +93,8 @@
 						          message: '登录成功',
 						          type: 'success',
 								  onClose:() =>{
+									this.$store.dispatch('USER_INFO_GET')
+									this.$store.dispatch('OPREATING_INFO_GET')
 									this.$router.push({
 										path: '/personal'
 									})  

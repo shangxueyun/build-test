@@ -59,10 +59,6 @@
 			<div v-if="resshow" class="noRes">
 				<img src="../../assets/img/noRes.png" alt="">
 				<p>未找到相关订单，请前往下单</p>
-				<template v-for="(item, key) in listChildData">
-					<list-child
-					v-model="listChildData" :key="key" :purchasing="1" :listKey="key" @inputValueListChild="inputValueListChild" :listStatus="1"></list-child>
-				</template>
 			</div>
 		</div>
 
@@ -70,11 +66,7 @@
 </template>
 
 <script>
-import ListChild from '@/components/ListChild/index'
 	export default {
-		components : {
-			ListChild
-		},
 		data: function() {
 			return {
 				status: 0,
@@ -87,38 +79,6 @@ import ListChild from '@/components/ListChild/index'
 				moreText: '全部加载完成',
 				pageflag: true,
 				resshow:true,
-				listChildData:[{
-					listID:1231,
-					batchID:'65111191104',
-					makeTime: 1595309353916,
-					depotId: '123131',
-					depotName: '新疆汇锦物流有限公司',
-					amount: '42.222',
-					packNum: '186',
-					indexCode: 'CF2005',
-					price: '154870',
-					basisPrice: '538',
-					notes: '[图片][图片][图片][图片][图片][图片][图片][图片][图片][图片]',
-					confirmTime: '确认时间',
-					bidOffered: 1,
-					bidType: 1,
-					lastPriceTime: 1595309353916,
-				},
-				{
-					listID:123122,
-					batchID:'65111191104',
-					makeTime: 1595309353916,
-					depotId: '548',
-					depotName: '新疆汇锦物流有限公司',
-					amount: '42.56',
-					packNum: '186',
-					indexCode: 'CF2005',
-					price: '154870',
-					basisPrice: '538',
-					notes: '这是备注',
-					confirmTime: '确认时间',
-					listingValidity: 1595309353916,
-				}],
 			}
 		},
 
@@ -134,10 +94,6 @@ import ListChild from '@/components/ListChild/index'
 		},
 
 		methods: {
-			inputValueListChild (key, value, listID) {
-				
-				
-			},
 			//切换列表
 			switchOrder(i) {
 				this.status = i;

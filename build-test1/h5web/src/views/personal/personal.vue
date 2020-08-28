@@ -25,13 +25,13 @@
 			</a>
 		</div>
 		<div class="personal_bot">
-			<p class="personal_bt">采购管理</p>
+			<p class="personal_bt" v-if="permissionMenu.WAIT_ENQUIRY || permissionMenu.BUY_ENQUIRY || permissionMenu.PURCHASE || permissionMenu.SEARCH_HISTORY">我是买方</p>
 			<div class="per_linkT">
-				<router-link to="/personal/waitEnquiry">
+				<router-link v-if="permissionMenu.WAIT_ENQUIRY" to="/personal/waitEnquiry">
 					<img src="../../assets/img/gouwuche@2x.png" alt="">
 					<p>待询盘({{cartNum}})</p>
 				</router-link>
-				<router-link to="/personal/myEnquiry/0">
+				<router-link v-if="permissionMenu.BUY_ENQUIRY" to="/personal/myEnquiry/0">
 					<img src="../../assets/img/caigou@2x.png" alt="">
 					<p>采购询盘({{orderNum.purchaseSpotSaleCount+orderNum.spotSaleCount}})</p>
 				</router-link>
@@ -39,7 +39,7 @@
 					<img src="../../assets/img/yiqueren@2x.png" alt="">
 					<p>点价管理({{orderNum.spotSaleCount}})</p>
 				</router-link> -->
-				<router-link to="/personal/myOrder/0">
+				<router-link v-if="permissionMenu.PURCHASE" to="/personal/myOrder/0">
 					<img src="../../assets/img/daiqueren@2x.png" alt="">
 					<p>采购订单({{myOrderNum.buyUnConfirm}})</p>
 				</router-link>
@@ -48,30 +48,30 @@
 					<img src="../../assets/img/tianjiaxuqiudingzhi@2x.png" alt="">
 					<p>添加需求定制</p>
 				</router-link> -->
-				<router-link to="/personal/myCustomized">
+				<router-link v-if="permissionMenu.SEARCH_HISTORY" to="/personal/myCustomized">
 					<img src="../../assets/img/xuqiudingzhi@2x.png" alt="">
 					<p>我的需求定制</p>
 				</router-link>
 			</div>
-			<p class="personal_bt">销售管理</p>
+			<p class="personal_bt" v-if="permissionMenu.LISTING || permissionMenu.SELL_ENQUIRY || permissionMenu.ORDER">我是卖方</p>
 			<div class="per_linkT">
-				<router-link to="/personal/myResource">
+				<router-link v-if="permissionMenu.LISTING" to="/personal/myResource">
 					<img src="../../assets/img/guapaidan@2x.png" alt="">
-					<p>我的国产棉({{resNum}})</p>
+					<p>我的报价({{resNum}})</p>
 				</router-link>
-				<router-link :to="'/personal/myImport'+'/'+ member.memberID">
+				<!-- <router-link :to="'/personal/myImport'+'/'+ member.memberID">
 					<img src="../../assets/img/jinkoumian.png" alt="">
-					<p>我的进口棉({{inpNum[-1]}})</p>
-				</router-link>
-				<router-link v-if="memberID!=10000" to="/personal/enquiry/0">
+					<p>线上交易({{orderNum.orderSpotSaleCount}})</p>
+				</router-link> -->
+				<router-link v-if="permissionMenu.SELL_ENQUIRY" to="/personal/enquiry/0">
 					<img src="../../assets/img/kehuxunpan@2x.png" alt="">
-					<p>客户询盘({{orderNum.orderSpotSaleCount}})</p>
+					<p>线上交易<span v-if="!permissionMenu.SELL_ENQUIRY_ADMIN">({{orderNum.orderSpotSaleCount}})</span></p>
 				</router-link>
 				<!-- <router-link to="/personal/myOrderBuy/0" :class="{'mt7':memberID!=10000}">
 					<img src="../../assets/img/daiqueren@2x.png" alt="">
 					<p>销售订单({{myOrderNum.sellUnConfirm}})</p>
 				</router-link> -->
-				<router-link to="/personal/myOrderBuy/0">
+				<router-link v-if="permissionMenu.ORDER" to="/personal/myOrderBuy/0">
 					<img src="../../assets/img/daiqueren@2x.png" alt="">
 					<p>销售订单({{myOrderNum.sellUnConfirm}})</p>
 				</router-link>
@@ -95,6 +95,7 @@
 </template>
 
 <script>
+import { mapState,  } from 'vuex'
 	export default {
 		data: function() {
 			return {
@@ -102,7 +103,7 @@
 				memberID: '',
 				user: '',
 				myOrderNum: '',
-				loading: true,
+				loading: false,
 				cartNum: '',
 				resNum: '',
 				inpNum: '',
@@ -110,42 +111,65 @@
 				geren:false,
 				qiye:false,
 				orderNum:'',
+				// 现有部分权限设置
+				permissionMenu: {
+					WAIT_ENQUIRY: false, // 待询盘
+					BUY_ENQUIRY: false, // 采购询盘
+					SELL_ENQUIRY: false, // 线上交易
+					SELL_ENQUIRY_ADMIN: false, // 子功能
+					PURCHASE: false, // 采购订单
+					SEARCH_HISTORY: false, // 我的需求定制
+					LISTING: false, // 我的报价
+					ORDER: false, // 销售订单					
+				},
+
 			}
 		},
+    	computed: mapState({
+			// 全局用户信息
+			userInfo: state => state.userInfo.userInfo
+		}),
 		created() {
-			window.scroll(0, 0);
-			//获取账户信息
-			this.$http.post('/wx/user/userInfo').then((response) => {
-				// console.log(response);
-				if (response.code == 9999||response.entity==null) {
-					// alert(JSON.stringify(response))
-					this.loading = false;
-					// localStorage.openID = '';
-					this.$message({
-						message: '登录失效，请重新登录',
-						type: 'error',
-						onClose: () => {
-							this.$router.push({
-								path: '/login'
-							})
-						}
-					});
-				}
-				this.member = response.entity.member;
-				this.user = response.entity.user;
-				this.loading = false;
-				this.memberID = response.entity.member.memberID;
-
-				// 获取进口棉数量
-				this.$http.post('/wx/listing/statusStat?memberID=' + this.memberID).then((response) => {
-					// console.log(response);
-					this.inpNum = response.data;
-				});
+      this.loading = true
+			window.scroll(0, 0)
+			// 获取进口棉数量
+			this.$http.post('/wx/listing/statusStat?memberID=' + this.memberID).then((response) => {
+				console.log(response);
+				this.inpNum = response.data;
 			});
-			this.$http.post('/wx/trade/getSpotSaleCount').then((response) => {
+			this.$http.post('/wx/spotSale/getSpotSaleCount').then((response) => {
 				// console.log(response);
 				this.orderNum=response.entity;
-			});
+      });
+			// 用户信息
+	    if (!this.userInfo.user) {
+        this.$message({
+          showClose: true,
+          message: this.userInfo.message,
+          type: 'error',
+          onClose: () => {
+            this.loading = false
+            this.$router.push({
+              path: '/login'
+            })
+          }
+        });
+      } else {
+        this.user = this.userInfo.user
+        this.member = this.userInfo.member
+        this.memberID = this.userInfo.member.memberID
+        // 用户权限控制
+        let permissionMenu = this.userInfo.permissionMenu
+        Object.keys(this.permissionMenu).forEach((o, i)=>{
+          for(let k of permissionMenu) {
+            if (k.includes(o))
+			this.permissionMenu[o] = true
+			if (k.includes('SELL_ENQUIRY_PLATFORM'))
+			this.permissionMenu['SELL_ENQUIRY_ADMIN'] = true
+          }
+        })
+        this.loading = false
+      }
 		},
 		mounted() {
 			this.$http.post('/wx/member/cert/user/get').then((response) => {
@@ -247,7 +271,11 @@
 							this.$http.post('/wx/user/logout').then((response) => {
 								// console.log(response);
 								if (response.success == true) {
-									// localStorage.openID = '';
+                  // localStorage.openID = '';
+                  this.$store.commit({
+                    type: 'USER_INFO_SET',
+                    userInfo: 'logout'
+                  })
 									this.$router.push({
 										path: '/loginPass'
 									})

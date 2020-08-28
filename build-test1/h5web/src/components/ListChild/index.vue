@@ -19,7 +19,7 @@
             <input :id="'inputValuebatchID'+listChild.listID" class="inputValue" type="checkbox" :name="'batchID,' + listChild.listID" :value="listChild.batchID"/>
           </template>
         </template>
-         <router-link :to="batchIDHref">{{ listChild.batchID }}</router-link>
+         <router-link style="position: relative;" :to="batchIDHref">{{ listChild.batchID }}<span v-if="listChild.listingType == 1" class="icon_you"></span></router-link>
       </div>
       <div class="list-td his">
         询盘时间 ：<span>{{ listChild.makeTime }}</span>
@@ -29,9 +29,45 @@
           </template>
       </div>
     </div>
+    <!-- 采购商 -->
+    <template v-if="purchasing == 1 && permissionMenu == 2">
+      <div class="list-tr">
+        <div class="list-td line" style="width: 100%;position: relative;">
+          采购商 : 
+          <span>{{ listChild.buyMemberName }}</span>
+        </div>
+      </div>
+    </template>
+    <!-- 市场部对接人 -->
+    <template v-if="purchasing == 1 && permissionMenu == 2">
+      <div class="list-tr">
+        <div class="list-td line" style="width: 100%;position: relative;">
+          市场部对接人 : 
+          <span>{{ listChild.sellServicerName }}&nbsp;</span><span>({{ listChild.sellServicerMobile }})</span>
+        </div>
+      </div>
+    </template>
+    <!-- 供应商 -->
+    <template v-if="purchasing == 2 && permissionMenu == 2">
+      <div class="list-tr">
+        <div class="list-td line" style="width: 100%;position: relative;">
+          供应商 : 
+          <span>{{ listChild.sellMemberName }}</span>
+        </div>
+      </div>
+    </template>
+    <!-- 资源部对接人 -->
+    <template v-if="purchasing == 2 && permissionMenu == 2">
+      <div class="list-tr">
+        <div class="list-td line" style="width: 100%;position: relative;">
+          资源部对接人 : 
+          <span>{{ listChild.resourceUserName }}&nbsp;</span><span>({{ listChild.resourceUserMobile }})</span>
+        </div>
+      </div>
+    </template>
     <!-- 仓库 -->
-    <div class="list-tr">
-      <div class="list-td line" style="width: 100%;position: relative;">
+    <div class="list-tr" style="position: relative;">
+      <div class="list-td line" style="width: 100%;">
         交货仓库 : 
         <template  v-if="purchasing == 2">
           <template v-if="listStatus == 0 || listStatus == 3">
@@ -112,33 +148,50 @@
             <template v-if="listChild.indexCode == ''">
               <template v-if="listStatus == 0 || listStatus == 3">
                 <template v-if="listStatus == 0">
-                  <input @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'price,' + listChild.listID" v-model="listChild.price">
+                  <!-- 测试说的禁止修改 -->
+                  <span>{{ listChild.supBasisPrice }}</span>
+                  <!-- <input @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'price,' + listChild.listID" v-model="listChild.price"> -->
                 </template>
                 <template v-else>
-                  <input @blur="validateInput" autocomplete="off" class="inputValue" :disabled="basisDisabled" type="number" :name="'price,' + listChild.listID" v-model="listChild.price">
+                  <span>{{ listChild.supBasisPrice }}</span>
+                  <!-- <input @blur="validateInput" autocomplete="off" class="inputValue" :disabled="basisDisabled" type="number" :name="'price,' + listChild.listID" v-model="listChild.price"> -->
                 </template>
               </template>
               <template v-else>
-                <span>{{ listChild.price }}</span>
+                <!-- 采购询盘 销售询盘 ---已成交状态中固定价不显示 -->
+                <!-- <span>{{ listChild.supBasisPrice }}</span> -->
+                <template v-if="listStatus == 7">
+                  <span>-</span>
+                </template>
+                <template v-else>
+                  <span>{{ listChild.supBasisPrice }}</span>
+                </template>
               </template>
             </template>
             <template v-else>
               <template v-if="listStatus == 0 || listStatus == 3">
                 <template v-if="listStatus == 0">
-                  <input @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'basisPrice,' + listChild.listID" v-model="listChild.basisPrice">
+                  <input @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'supBasisPrice,' + listChild.listID" v-model="listChild.supBasisPrice">
                 </template>
                 <template v-else>
-                  <input @blur="validateInput" autocomplete="off" class="inputValue" :disabled="basisDisabled" type="number" :name="'basisPrice,' + listChild.listID" v-model="listChild.basisPrice">
+                  <input @blur="validateInput" autocomplete="off" class="inputValue" :disabled="basisDisabled" type="number" :name="'supBasisPrice,' + listChild.listID" v-model="listChild.supBasisPrice">
                 </template>
               </template>
               <template v-else>
-                <span>{{ listChild.basisPrice }}</span>
+                <span>{{ listChild.supBasisPrice }}</span>
               </template>
             </template>
           </template>
           <template  v-else>
             <template v-if="listChild.indexCode == ''">
-              <span>{{ listChild.price }}</span>
+              <!-- 采购询盘 销售询盘 ---已成交状态中固定价不显示 -->
+              <!-- <span>{{ listChild.price }}</span> -->
+              <template v-if="listStatus == 7">
+                <span>-</span>
+              </template>
+              <template v-else>
+                <span>{{ listChild.price }}</span>
+              </template>
             </template>
             <template  v-else>
               <span>{{ listChild.basisPrice }}</span>
@@ -184,10 +237,10 @@
         <!-- 成交时间 -->
         <template v-if="listStatus == 7 || listStatus == 8">
           <template v-if="listChild.indexCode == ''">
-            <div class="list-td" style="width: 45%">
-              挂盘期货价 :
+            <!-- <div class="list-td" style="width: 45%">
+              挂盘成交价 :
               <span style="color: #FE8A51">{{ listChild.price }}</span>
-            </div>
+            </div> -->
             <!-- 挂盘期限 -->
             <div class="list-td" style="width: 55%">
               成交时间 ：
@@ -196,8 +249,8 @@
           </template>
           <template v-else>
             <div class="list-td" style="width: 45%">
-              买方出价 :
-              <span style="color: #FE8A51">{{ listChild.price }}</span>
+              挂盘成交价 :
+              <span style="color: #FE8A51">{{ listChild.platePrice }}</span>
             </div>
             <div class="list-td" style="width: 58%">
               挂盘期限:
@@ -220,15 +273,31 @@
       </div>
     </template>
     <!-- 买方出价/挂盘期货价 -->
+    <template v-if="purchasing == 2">
+      <div class="list-tr three" v-show="listStatus == 3 && closingCost">
+        <div class="list-td" style="width: 90%">
+          成交价 :
+          <input @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'platePrice,' + listChild.listID" :value="listChild.price">
+        </div>
+      </div>
+    </template>
     <!-- 采购 -->
     <template v-else-if="purchasing == 1">
       <template v-if="listChild.indexCode == ''">
         <template v-if="listStatus == 7 || listStatus == 8">
           <div class="list-tr three">
-            <div class="list-td" style="width: 45%">
-              挂盘期货价 :
-              <span style="color: #FE8A51">{{ listChild.price }}</span>
-            </div>
+            <template v-if="listStatus == 7">
+              <!-- <div class="list-td" style="width: 45%">
+                挂盘成交价 :
+                <span style="color: #FE8A51">{{ listChild.platePrice }}</span>
+              </div> -->
+            </template>
+            <template v-else>
+              <div class="list-td" style="width: 45%">
+                挂盘期货价 :
+                <span style="color: #FE8A51">{{ listChild.price }}</span>
+              </div>
+            </template>
             <!-- 挂盘期限 -->
             <div class="list-td" style="width: 58%">
               成交时间 ：
@@ -436,7 +505,8 @@ export default {
         // position_depotNameOption: [],
         // position_depotNameOption: [],
       },
-      appVersion: window.navigator.appVersion // 兼容
+      appVersion: window.navigator.appVersion, // 兼容
+      closingCost: false // 成交价flag
     }
   },
   computed: {
@@ -478,6 +548,7 @@ export default {
       type: Number,
       default: 0 
     },
+    permissionMenu: [String, Number] // 1 客户 2 棉联用户
   },
   mounted () {
     // // 根据key取对象
@@ -653,8 +724,15 @@ export default {
         let listIDkey = row.target.getAttribute('listID')
         let purchasing = row.target.getAttribute('purchasing')
         window.thatVue = this
+        // 根据权限显示不同接口
+        let url
+        // 1 客户 2 棉联用户
+        if (this.permissionMenu == 2)
+        url = `/wx/admin/spotSale/detail?listID=${listIDkey}&type=${purchasing}`
+        else
+        url = `/wx/spotSale/detail?listID=${listIDkey}&type=${purchasing}`
         this.$HttpRequest({
-          url: `/wx/spotSale/detail?listID=${listIDkey}&type=${purchasing}`,
+          url: url,
           headers: {
             'Content-Type' : 'application/json;charset=utf-8',
           },
@@ -724,6 +802,14 @@ export default {
               this.$emit('inputValueListChild', 'bidType', '', ObjKey, checked.checked, checked.value)
               this.$emit('inputValueListChild', 'bidMinPrice', '', ObjKey, checked.checked, checked.value)
             }   
+          }
+        }
+
+        if (this.purchasing == 2 && this.listStatus == 3) {
+          if (row.target.value == 'TRADED') {
+            this.closingCost = true
+          } else {
+            this.closingCost = false
           }
         }
       },
@@ -910,6 +996,15 @@ export default {
           margin: 0;
           font-size: 0.3rem;
         }
+        .icon_you{
+          position: absolute;
+          top: .08rem;
+          right: -.28rem;
+          width: .24rem;
+          height: .24rem;
+          background: url('../../assets/icon/you.png') no-repeat;
+          background-size: 100%;
+        }
       }
       .line{
         line-height: .8rem;
@@ -945,6 +1040,8 @@ export default {
           left: 1.4rem;
           padding: 0 .1rem;
           border-top: 1px solid #eee;
+          overflow: scroll;
+          z-index: 111;
           nav{
             li{
               list-style: none;

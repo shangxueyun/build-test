@@ -23,9 +23,9 @@
 			</a>
 		</div>
 		<div class="menu_index">
-			<router-link to="/shoppingCart">
+			<router-link to="/personal/waitEnquiry">
 				<img src="../../assets/img/gouwuche.png" alt="">
-				<p>购物车</p>
+				<p>待询盘</p>
 			</router-link>
 		</div>
 		<div class="menu_index">

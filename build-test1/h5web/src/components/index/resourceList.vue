@@ -13,7 +13,7 @@
 		</div>
 		<div class="res_list this_res" v-if="ListShow">
 			<ul>
-				<li class="res_inx" v-for="item in resList" @click="godetails(item.batchID,item.listingID,item.listingType)">
+				<li class="res_inx" v-for="item in resList" @click="godetails(item.batchID,item.listingID,item.listingType)" :key="item.batchID">
 					<div class="res_c" style="width: 100%;">
 						<div class="res_top wrap">
 							<!-- <p v-if="item.listingType==1" class="top_cla">自营</p> -->
@@ -24,12 +24,12 @@
 							<div class="clear"></div>
 						</div>
 						<div class="res_con">
-							<div><span class="title">长度</span></br><span class="num">{{item.lengthAvg}}</span></div><i></i>
-							<div><span class="title">强力</span></br><span class="num">{{item.strongAvg}}</span></div><i></i>
-							<div><span class="title">马值</span></br><span class="num">{{item.mikeAvg}}</span></div><i></i>
-							<div><span class="title">含杂</span></br><span class="num">{{item.impurity}}</span></div><i></i>
-							<div><span class="title">回潮</span></br><span class="num">{{item.moisture}}</span></div><i></i>
-							<div><span class="title">整齐度</span></br><span class="num">{{item.neatAvg}}</span></div>
+							<div><span class="title">长度</span><br><span class="num">{{item.lengthAvg}}</span></div><i></i>
+							<div><span class="title">强力</span><br><span class="num">{{item.strongAvg}}</span></div><i></i>
+							<div><span class="title">马值</span><br><span class="num">{{item.mikeAvg}}</span></div><i></i>
+							<div><span class="title">含杂</span><br><span class="num">{{item.impurity}}</span></div><i></i>
+							<div><span class="title">回潮</span><br><span class="num">{{item.moisture}}</span></div><i></i>
+							<div><span class="title">整齐度</span><br><span class="num">{{item.neatAvg}}</span></div>
 							<div class="clear"></div>
 						</div>
 						<div class="cang">
@@ -73,49 +73,51 @@
 		</div>
 		<div class="res_list this_res" v-if="!ListShow">
 			<ul>
-				<li class="res_inx" v-for="(item,index) in resList2" v-if="index<5" @click="godetails(item.batchID,item.listingID,item.listingType)">
-					<div class="res_c" style="width: 100%;">
-						<div class="res_top wrap">
-							<!-- <p v-if="item.listingType==1" class="top_cla">自营</p> -->
-							<p class="top_num">{{item.batchID}}</p>
-							<p class="top_grade">{{item.primaryColorName}}</p>
-							
-							
-							<div class="clear"></div>
+				<template v-for="(item,index) in resList2" >
+					<li class="res_inx" v-if="index<5" @click="godetails(item.batchID,item.listingID,item.listingType)" :key="item.batchID">
+						<div class="res_c" style="width: 100%;">
+							<div class="res_top wrap">
+								<!-- <p v-if="item.listingType==1" class="top_cla">自营</p> -->
+								<p class="top_num">{{item.batchID}}</p>
+								<p class="top_grade">{{item.primaryColorName}}</p>
+								
+								
+								<div class="clear"></div>
+							</div>
+							<div class="res_con">
+								<div><span class="title">长度</span><br><span class="num">{{item.lengthAvg}}</span></div><i></i>
+								<div><span class="title">强力</span><br><span class="num">{{item.strongAvg}}</span></div><i></i>
+								<div><span class="title">马值</span><br><span class="num">{{item.mikeAvg}}</span></div><i></i>
+								<div><span class="title">含杂</span><br><span class="num">{{item.impurity}}</span></div><i></i>
+								<div><span class="title">回潮</span><br><span class="num">{{item.moisture}}</span></div><i></i>
+								<div><span class="title">整齐度</span><br><span class="num">{{item.neatAvg}}</span></div>
+								<div class="clear"></div>
+							</div>
+							<div class="cang">
+								<p class="top_lei">{{item.cottonTypeName}}</p><p class="weight_one"><span>{{item.pubPrice}}</span>元/吨</p>
+							</div>
+							<div class="cang">
+								<p>仓库：{{item.depotName}}</p><p class="zhishu" v-if="item.indexCode">{{item.indexCode}}<span v-if="item.basis>=0">+</span>{{item.basis}}</p>
+							</div>
+							<div class="res_bot wrap">
+								<p class="weight_two">公重<span>{{item.pubWeight}}</span>吨</p>
+								<p class="top_date">{{item.listingDate.substring(5,11)}}</p>
+								<input class="res_btn" v-if="(item.cartID==null||item.cartID==0)&&item.status == 0" type="button" value="添加询盘" @click.stop="joinCart(item.listingID,item);">
+								<input class="res_btn" v-if="item.cartID!=0&&item.cartID!=null&&item.status == 0" type="button" value="删除询盘" style="background: #14bab4;" @click.stop="removeCart(item.listingID,item);">
+								<input class="res_btn" v-if="item.status != 0" type="button" value="添加询盘" style="background: #ccc;" @click.stop="">
+								<!-- <div class="clear"></div> -->
+							</div>
 						</div>
-						<div class="res_con">
-							<div><span class="title">长度</span></br><span class="num">{{item.lengthAvg}}</span></div><i></i>
-							<div><span class="title">强力</span></br><span class="num">{{item.strongAvg}}</span></div><i></i>
-							<div><span class="title">马值</span></br><span class="num">{{item.mikeAvg}}</span></div><i></i>
-							<div><span class="title">含杂</span></br><span class="num">{{item.impurity}}</span></div><i></i>
-							<div><span class="title">回潮</span></br><span class="num">{{item.moisture}}</span></div><i></i>
-							<div><span class="title">整齐度</span></br><span class="num">{{item.neatAvg}}</span></div>
-							<div class="clear"></div>
+						<div class="status">
+							<img v-if="item.status != 0" src="../../assets/img/status1.png" alt="">
+							<p v-if="item.status != 0">已售</p>
+							<img v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是' && !item.inPointPriceValue" src="../../assets/img/status2.png" alt="">
+							<p v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是' && !item.inPointPriceValue">点价中</p>
+							<img v-if="item.status == 0&&item.inPointPrice && item.inPointPrice == '是' && item.inPointPriceValue" src="../../assets/img/status3.png" alt="">
+							<p v-if="item.status == 0&&item.inPointPrice && item.inPointPrice == '是' && item.inPointPriceValue">点价中{{item.inPointPriceValue}}</p>
 						</div>
-						<div class="cang">
-							<p class="top_lei">{{item.cottonTypeName}}</p><p class="weight_one"><span>{{item.pubPrice}}</span>元/吨</p>
-						</div>
-						<div class="cang">
-							<p>仓库：{{item.depotName}}</p><p class="zhishu" v-if="item.indexCode">{{item.indexCode}}<span v-if="item.basis>=0">+</span>{{item.basis}}</p>
-						</div>
-						<div class="res_bot wrap">
-							<p class="weight_two">公重<span>{{item.pubWeight}}</span>吨</p>
-							<p class="top_date">{{item.listingDate.substring(5,11)}}</p>
-							<input class="res_btn" v-if="(item.cartID==null||item.cartID==0)&&item.status == 0" type="button" value="添加询盘" @click.stop="joinCart(item.listingID,item);">
-							<input class="res_btn" v-if="item.cartID!=0&&item.cartID!=null&&item.status == 0" type="button" value="删除询盘" style="background: #14bab4;" @click.stop="removeCart(item.listingID,item);">
-							<input class="res_btn" v-if="item.status != 0" type="button" value="添加询盘" style="background: #ccc;" @click.stop="">
-							<!-- <div class="clear"></div> -->
-						</div>
-					</div>
-					<div class="status">
-						<img v-if="item.status != 0" src="../../assets/img/status1.png" alt="">
-						<p v-if="item.status != 0">已售</p>
-						<img v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是' && !item.inPointPriceValue" src="../../assets/img/status2.png" alt="">
-						<p v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是' && !item.inPointPriceValue">点价中</p>
-						<img v-if="item.status == 0&&item.inPointPrice && item.inPointPrice == '是' && item.inPointPriceValue" src="../../assets/img/status3.png" alt="">
-						<p v-if="item.status == 0&&item.inPointPrice && item.inPointPrice == '是' && item.inPointPriceValue">点价中{{item.inPointPriceValue}}</p>
-					</div>
-				</li>
+					</li>
+				</template>
 			</ul>
 		</div>
 	</div>
@@ -245,6 +247,7 @@
 							message: '添加询盘成功',
 							type: 'success'
 						});
+						this.getstore('添加询盘成功')
 					} else {
 						if (response.code != 9999) {
 							this.$message({
@@ -278,6 +281,7 @@
 							message: '删除询盘成功',
 							type: 'success'
 						});
+						this.getstore()
 					} else {
 						if (response.code != 9999) {
 							this.$message({
@@ -310,6 +314,18 @@
 					}
 				});
 			},
+			getstore (type) {
+				// 获取
+				let num = this.$store.getters.OPREATING_INFO_GET('UserEnquiries')
+				// 修改
+				type ? type = 1 : type = -1
+				this.$store.commit({
+					type: 'OPREATING_INFO_SET',
+					UserEnquiries: ( num ? num : 0 ) + type
+				})
+				// 存储
+				this.$store.dispatch('OPREATING_INFO_SET_LOA')
+			}
 		}
 	}
 </script>

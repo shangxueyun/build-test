@@ -194,7 +194,8 @@
 						          showClose: true,
 						          message: '添加询盘成功',
 						          type: 'success'
-						        });
+								});
+								this.getstore('添加询盘成功')
 					}else{
 						this.$message({
 						          showClose: true,
@@ -214,6 +215,7 @@
 							message: '删除询盘成功',
 							type: 'success'
 						});
+						this.getstore()
 					} else {
 						if (response.code != 9999) {
 							this.$message({
@@ -245,7 +247,18 @@
 					}
 				});
 			},
-			
+			getstore (type) {
+				// 获取
+				let num = this.$store.getters.OPREATING_INFO_GET('UserEnquiries')
+				// 修改
+				type ? type = 1 : type = -1
+				this.$store.commit({
+					type: 'OPREATING_INFO_SET',
+					UserEnquiries: ( num ? num : 0 ) + type
+				})
+				// 存储
+				this.$store.dispatch('OPREATING_INFO_SET_LOA')
+			}
 		},
 		//获取资订单详情
 		beforeRouteEnter (to, from, next) {

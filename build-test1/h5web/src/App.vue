@@ -16,7 +16,8 @@
 				<img class="dian" src="./assets/icon/ziyuankudianji@2x.png" alt="">
 				<p>商城</p>
 			</router-link>
-			<router-link to="/personal/waitEnquiry">
+			<router-link to="/personal/waitEnquiry" style="position: relative;">
+				<span v-if="userInfo.user" :UserEnquiries="UserEnquiries" class="enquiriesNum">{{ UserEnquiries }}</span>
 				<img class="wei" src="./assets/img/dibugouwuche@2x.png" alt="">
 				<img class="dian" src="./assets/img/dibugouwuchedianji@2x.png" alt="">
 				<p>待询盘</p>
@@ -33,11 +34,12 @@
 				<img class="dian" src="./assets/img/dibudianpudianji@2x.png" alt="">
 				<p>店铺</p>
 			</router-link>
-			<router-link to="/shoppingCart">
+			<router-link to="/personal/waitEnquiry" style="position: relative;">
+				<span :UserEnquiries="UserEnquiries" class="enquiriesNum">{{ UserEnquiries }}</span>
 				<img class="wei" src="./assets/img/dibugouwuche@2x.png" alt="">
 				<img class="dian" src="./assets/img/dibugouwuchedianji@2x.png" alt="">
 				<p>购物车</p>
-			</router-link>
+			</router-link >
 			<router-link to="/personal">
 				<img class="wei" src="./assets/icon/woweidianji@2x.png" alt="">
 				<img class="dian" src="./assets/icon/wodianji@2x.png" alt="">
@@ -62,6 +64,7 @@
 
 
 <script>
+import { mapState } from 'vuex'
 	export default {
 		data: function() {
 			return {
@@ -71,6 +74,18 @@
 				kefu:true,
 			}
 		},
+		computed: mapState({
+			// 待询盘数量
+			UserEnquiries: state => state.operatingInfo.operatingInfo.UserEnquiries ? state.operatingInfo.operatingInfo.UserEnquiries : 0,
+			// 全局用户信息
+			userInfo: state => state.userInfo.userInfo
+		}),
+		beforeCreate () {
+			// // 加载项目代入user信息
+			this.$store.dispatch('USER_INFO_GET')
+			this.$store.dispatch('OPREATING_INFO_GET')
+		},
+		
 		methods: {
 			getCodeApi(state) { //获取code   
 				let urlNow = encodeURIComponent(window.location.href);
@@ -83,6 +98,17 @@
 			getUrlKey(name) { //获取url 参数
 				return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [, ""])[1]
 					.replace(/\+/g, '%20')) || null;
+			},
+			kefuLogin(){
+				this.$message({
+					message: '还未登录，请先登录后再联系客服',
+					type: 'error',
+					onClose: () => {
+						this.$router.push({
+							path: '/login'
+						})
+					}
+				});
 			}
 		},
 		created() { //返回值
@@ -518,5 +544,17 @@
 		a{position: fixed;width: 0.8rem;bottom: 1.5rem;right: 0.2rem;z-index:9999;
 			img{width: 100%;}
 		}
+	}
+	.enquiriesNum{
+		position: absolute;
+		top: 0;
+		right: .4rem;
+		width: 14px;
+		height: 14px;
+		line-height: 14px;
+		border-radius: .14rem;
+		background: red;
+		color: #fff;
+		font-size: .24rem;
 	}
 </style>

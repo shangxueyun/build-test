@@ -47,10 +47,10 @@
 				</tr>
 				<tr>
 					<td class="tit2">
-						<p>销售条款</p>
+						<p>条款</p>
 					</td>
 					<td class="clauseList">
-						<p v-for="(item,key) in this.clause">{{key}}.{{item.content}}</p>
+						<p v-for="(item,key) in this.clause">{{key + 1}}.{{item.content}}</p>
 					</td>
 				</tr>
 				<!-- <tr>

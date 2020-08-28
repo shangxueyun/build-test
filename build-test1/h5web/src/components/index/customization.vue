@@ -1,12 +1,19 @@
 <template>
 	<div class="cus_con">
 		<p class="cus_title">需求定制</p>
-		<router-link to='/personal/customized'>
-			<img class="cus_pic" src="../../assets/img/xuqiudingzhiBanner.png" alt="">
-		</router-link>
+		<template v-if="permissionMenu">
+			<router-link to='/personal/customized'>
+				<img class="cus_pic" src="../../assets/img/xuqiudingzhiBanner.png" alt="">
+			</router-link>
+		</template>
+		<template v-else>
+			<router-link to='/login'>
+				<img class="cus_pic" src="../../assets/img/xuqiudingzhiBanner.png" alt="">
+			</router-link>
+		</template>
 		<div class="cus_li">
 			<ul>
-				<li class="cus_inx" v-for="(item,index) in customization" @click="gowarehouse(item.searchID)">
+				<li class="cus_inx" v-for="(item,index) in customization" @click="gowarehouse(item.searchID)" :key="index">
 					<div class="cus_inx_t">
 						<p class="cus_name fl">{{item.searchName}}</p>
 						<p class="cus_lei fl">采摘类型
@@ -14,35 +21,39 @@
 							<span v-if="item.d28">双28</span>
 							<span v-if="item.d29">双29</span>
 							<i v-if="item.cottonSource">
-								<span v-for="type in item.cottonSource.split(',')" v-if="type==='0'&&item.cottonSource">新疆棉</span>
-								<span v-for="type in item.cottonSource.split(',')" v-if="type==='1'&&item.cottonSource">地产棉</span>
-								<span v-for="type in item.cottonSource.split(',')" v-if="type==='2'&&item.cottonSource">进口棉</span>
-								<span v-for="type in item.cottonSource.split(',')" v-if="type==='01'&&item.cottonSource">新疆地方</span>
-								<span v-for="type in item.cottonSource.split(',')" v-if="type==='02'&&item.cottonSource">新疆兵团</span>
+								<template v-for="type in item.cottonSource.split(',')">
+									<span v-if="type==='0'&&item.cottonSource" :key="type">新疆棉</span>
+									<span v-if="type==='1'&&item.cottonSource" :key="type">地产棉</span>
+									<span v-if="type==='2'&&item.cottonSource" :key="type">进口棉</span>
+									<span v-if="type==='01'&&item.cottonSource" :key="type">新疆地方</span>
+									<span v-if="type==='02'&&item.cottonSource" :key="type">新疆兵团</span>
+								</template>
 							</i>
 							<i v-if="!item.cottonSource">
 								<span>-</span>
 							</i>
 						</p>
-						<p class="cus_add fl">存放地&nbsp<span v-if="item.depositary">{{item.depositary}}</span><span v-if="item.depositary">{{item.depositary}}</span></p>
+						<p class="cus_add fl">存放地&nbsp;<span v-if="item.depositary">{{item.depositary}}</span><span v-if="item.depositary">{{item.depositary}}</span></p>
 						<!-- <p class="fl" v-if="item.pubPrice" style="color: #fd7320;">&nbsp&nbsp最低&nbsp{{item.pubPrice}}</p> -->
 						<div class="clear"></div>
 					</div>
 					<div class="cus_inx_c">
 						<p class="fl cus_p" v-if="item.primaryColor">颜色级
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='11'&&index==0&&item.primaryColor">白棉1级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='21'&&index==0&&item.primaryColor">白棉2级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='31'&&index==0&&item.primaryColor">白棉3级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='41'&&index==0&&item.primaryColor">白棉4级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='51'&&index==0&&item.primaryColor">白棉5级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='12'&&index==0&&item.primaryColor">淡点污棉1级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='22'&&index==0&&item.primaryColor">淡点污棉2级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='32'&&index==0&&item.primaryColor">淡点污棉3级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='13'&&index==0&&item.primaryColor">淡黄染棉1级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='23'&&index==0&&item.primaryColor">淡黄染棉2级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='33'&&index==0&&item.primaryColor">淡黄染棉3级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='14'&&index==0&&item.primaryColor">黄染棉1级</span>
-							<span v-for="(type,index) in item.primaryColor.split(',')" v-if="type==='24'&&index==0&&item.primaryColor">黄染棉2级</span>
+							<template v-for="(type,index) in item.primaryColor.split(',')">
+								<span v-if="type==='11'&&index==0&&item.primaryColor" :key="type">白棉1级</span>
+								<span v-if="type==='21'&&index==0&&item.primaryColor" :key="type">白棉2级</span>
+								<span v-if="type==='31'&&index==0&&item.primaryColor" :key="type">白棉3级</span>
+								<span v-if="type==='41'&&index==0&&item.primaryColor" :key="type">白棉4级</span>
+								<span v-if="type==='51'&&index==0&&item.primaryColor" :key="type">白棉5级</span>
+								<span v-if="type==='12'&&index==0&&item.primaryColor" :key="type">淡点污棉1级</span>
+								<span v-if="type==='22'&&index==0&&item.primaryColor" :key="type">淡点污棉2级</span>
+								<span v-if="type==='32'&&index==0&&item.primaryColor" :key="type">淡点污棉3级</span>
+								<span v-if="type==='13'&&index==0&&item.primaryColor" :key="type">淡黄染棉1级</span>
+								<span v-if="type==='23'&&index==0&&item.primaryColor" :key="type">淡黄染棉2级</span>
+								<span v-if="type==='33'&&index==0&&item.primaryColor" :key="type">淡黄染棉3级</span>
+								<span v-if="type==='14'&&index==0&&item.primaryColor" :key="type">黄染棉1级</span>
+								<span v-if="type==='24'&&index==0&&item.primaryColor" :key="type">黄染棉2级</span>
+							</template>
 						</p>
 						<p class="fl cus_p" v-if="!item.primaryColor">颜色级
 							<span>-</span>
@@ -72,10 +83,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 	export default{
 		data:function(){
 			return{
 				customization:'',
+				permissionMenu: null
 			}
 		},
 		created() {
@@ -86,7 +99,16 @@
 				this.$emit('load',false)
 				
 			});
+			if (!this.userInfo.user) {
+				this.permissionMenu = false
+			} else {
+				this.permissionMenu = true
+			}
 		},
+		computed: mapState({
+			// 全局用户信息
+			userInfo: state => state.userInfo.userInfo
+		}),
 		methods:{
 			editTo(searchId_){
 				this.$router.push({

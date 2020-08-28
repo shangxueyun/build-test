@@ -7,7 +7,13 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>棉联-棉花电商综合服务平台</title>
 	<link rel="stylesheet" href="static/laydate.css">
-	<script src="static/laydate.js" type="text/javascript" charset="utf-8"></script>
+  <script src="static/laydate.js" type="text/javascript" charset="utf-8"></script>
+  <style>
+    /* ios禁用微信调整字体改变 */
+    body {
+        -webkit-text-size-adjust: 100% !important;
+    }
+  </style>
   </head>
   <body>
     <noscript>
@@ -16,6 +22,33 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-	
+	<script>
+    // android禁用微信调整字体改变
+    (function () {
+    　　if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+    　　  handleFontSize();
+    　　} else {
+      　　if (document.addEventListener) {
+      　　　　document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+      　　} else if (document.attachEvent) {
+      　　　　document.attachEvent("WeixinJSBridgeReady", handleFontSize);
+      　　　　document.attachEvent("onWeixinJSBridgeReady", handleFontSize);
+      　　}
+        }
+
+      function handleFontSize() {
+      　　// 设置网页字体为默认大小
+      　　WeixinJSBridge.invoke('setFontSizeCallback', {
+      　　'fontSize': 0
+      　　});
+      　　// 重写设置网页字体大小的事件
+      　　WeixinJSBridge.on('menu:setfont', function () {
+      　　　　WeixinJSBridge.invoke('setFontSizeCallback', {
+      　　　　　　'fontSize': 0
+      　　　　});
+      　　});
+      }
+    })();
+  </script>
   </body>
 </html>
