@@ -117,6 +117,19 @@ export const constantRoutes = [
         meta: { title: '修改生成配置' }
       }
     ]
+  },
+  {
+    path: '/product',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'AddEdit',
+        component: () => import('@/views/pms/product/AddEdit'),
+        name: 'AddEdit',
+        meta: { title: '商品添加编辑' }
+      }
+    ]
   }
 ]
 

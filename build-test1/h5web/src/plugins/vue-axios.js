@@ -5,26 +5,19 @@ import VueAxios from 'vue-axios'
 Vue.use(VueAxios,axios)
 
 
-axios.interceptors.request.use(function (config) {
-    // 在发送请求之前做些什么
-
-// 
-	// 
+axios.interceptors.request.use(config => {
+	// 在发送请求之前做些什么
 	let param = new URLSearchParams();
 	// param.append("sessionID", sessionStorage.sessionID);
 	// param.append("userID", 10001);
-	// param.append("open_id", sessionStorage.openID);
+	// param.append("openID", sessionStorage.openID);
 	
 	// param.append("mobile", "13800138000");
 	// param.append("password", "admin");
-	param.append("open_id", localStorage.openID);
-	// alert(param);
-	
-	// 
-	config.data = param;
-	// alert(userID);
-	// console.log(config);
-	//config.body
+	// if (!config.url.includes('openID') || config.data) {
+	// 	param.append("openID", localStorage.openID);
+	// 	config.data = param;
+	// }
 	if (localStorage.openID)
 	config.headers = {
 		openID: localStorage.openID

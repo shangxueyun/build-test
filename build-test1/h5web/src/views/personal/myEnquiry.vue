@@ -21,6 +21,7 @@ import InternalUser from '@/components/myEnquiryChildren/InternalUser'
 			return {
         JumpComponent: '', // 1 客户 2 棉联用户
         RouteStatus: null,
+        userInfo: '',
         loading: true
 			}
     },
@@ -30,7 +31,7 @@ import InternalUser from '@/components/myEnquiryChildren/InternalUser'
     },
     computed: {
       // 全局用户信息
-      userInfo: {
+      userInfoM: {
         get() {
           return this.$store.state.userInfo.userInfo
         },
@@ -38,6 +39,9 @@ import InternalUser from '@/components/myEnquiryChildren/InternalUser'
       }
 		},
 		created() {
+      this.userInfo = this.userInfoM
+      if (JSON.stringify(this.userInfo) == '{}')
+      this.userInfo = JSON.parse(sessionStorage.getItem('userInfo')) ? JSON.parse(sessionStorage.getItem('userInfo')) : {}
       if (JSON.stringify(this.userInfo) == '{}') {
         this.$HttpRequest({url: '/wx/user/userInfo',method: 'post'}).then(res => {
           if (res.code != 9999 && res.entity) {

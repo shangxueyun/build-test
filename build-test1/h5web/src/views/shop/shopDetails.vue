@@ -92,7 +92,9 @@
 								</div>	
 								<div class="res_bot wrap" @click="godetails(item.batchID,item.listingID)">
 									<div class="res_price">
-										<p class="weight_two">公重<span>{{item.pubWeight}}</span> 吨</p>
+										<!-- <p class="weight_two">公重<span>{{item.pubWeight}}</span> 吨</p> -->
+										<p class="weight_two" v-if="item.amountType!=8">公重<span>{{item.pubWeight}}</span> 吨</p>
+										<p class="weight_two" v-if="item.amountType==8">仓重<span>{{item.amount}}</span> 吨</p>
 										<p class="top_date">{{item.listingDate.substring(5,11)}}</p>
 									</div>
 									
@@ -110,10 +112,8 @@
 							<div class="status">
 								<img v-if="item.status != 0" src="../../assets/img/status1.png" alt="">
 								<p v-if="item.status != 0">已售</p>
-								<img v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是' && !item.inPointPriceValue" src="../../assets/img/status2.png" alt="">
-								<p v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是' && !item.inPointPriceValue">点价中</p>
-								<img v-if="item.status == 0&&item.inPointPrice && item.inPointPrice == '是' && item.inPointPriceValue" src="../../assets/img/status3.png" alt="">
-								<p v-if="item.status == 0&&item.inPointPrice && item.inPointPrice == '是' && item.inPointPriceValue">点价中{{item.inPointPriceValue}}</p>
+								<img v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是'" src="../../assets/img/status2.png" alt="">
+								<p v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是'">点价中</p>
 							</div>
 						</li>
 			
@@ -290,14 +290,14 @@
 						<p class="save_title" style="margin-left: .18rem;">存放地:</p>
 						<!-- 城市父级循环不在点击范围 -->
 						<template v-if="address_list.length">
-						<place-of-origin ref="placeOfOrigin" :paramsSidings="paramsSidings" v-model="address_list" :type-num="3" @addparamsCall="addparamsCallplace"></place-of-origin>
+						<place-of-origin ref="placeOfOrigin" :ResetFig="ResetFig" :paramsSidings="paramsSidings" v-model="address_list" :type-num="3" @addparamsCall="addparamsCallplace"></place-of-origin>
 						</template>
 					</div>
 					<div class="opt_botl" style="padding: 0">
 						<p class="save_title" style="margin-left: .18rem;">产地:</p>
 						<!-- 城市父级循环不在点击范围 -->
 						<template v-if="yieldly_list.length">
-						<place-of-origin v-model="yieldly_list" :type-num="6" @addparamsCall="addparamsCallplace"></place-of-origin>
+						<place-of-origin ref="placeOfOrigin1" v-model="yieldly_list" :ResetFig="ResetFig" :type-num="6" @addparamsCall="addparamsCallplace"></place-of-origin>
 						</template>
 					</div>
 
@@ -379,7 +379,9 @@
 						<div class="clear"></div>
 					</div> -->
 				</div>
-				<div class="slide_click">
+				<div class="slide_click" style="display: flex;">
+					<!-- <input class="chongzhi" type="button" value="点击重置" @click="clearSelect"> -->
+					<div class="reset" @click="resetclose">清空 <i></i></div>
 					<input class="wancheng" id="wancheng" type="button" value="确定筛选" @click="addparams('noshow')">
 					<input class="chongzhi" type="button" value="添加到需求定制" @click="save_top">
 				</div>
@@ -416,6 +418,7 @@
 				optActive:'',
 				warehouseList:'',
 				paramsSidings: null,
+				ResetFig: 0,
 				loading:true,
 				ifAsc:true,
 				asc:'desc',
@@ -435,7 +438,7 @@
 					{ id: 3,name:'固定价',flag:false,filter:'pricing',value:'true',color:'yellow',},
 					{ id: 4, name: '点价', flag: false, filter: 'listingIndex',value: 'true',color:'yellow',},
 				],
-				ysj_items_list: [{ id: 0, name: '不限', flag: true, filter: '', value: '' }, { id: 1, name: '白棉1级', flag: false, filter: 'primaryColor', value: 11 }, { id: 2, name: '白棉2级', flag: false, filter: 'primaryColor', value: 21 }, { id: 3, name: '白棉3级', flag: false, filter: 'primaryColor', value: 31 }, { id: 4, name: '白棉4级', flag: false, filter: 'primaryColor', value: 41 }, { id: 5, name: '白棉5级', flag: false, filter: 'primaryColor', value: 51 }, { id: 6, name: '淡点污棉1级', flag: false, filter: 'primaryColor', value: 12 }, { id: 7, name: '淡点污棉2级', flag: false, filter: 'primaryColor', value: 22 }, { id: 8, name: '淡点污棉3级', flag: false, filter: 'primaryColor', value: 32 }, { id: 9, name: '淡黄染棉1级', flag: false, filter: 'primaryColor', value:13 }, { id: 10, name: '淡黄染棉2级', flag: false, filter: 'primaryColor', value:23 }, { id: 11, name: '淡黄染棉3级', flag: false, filter: 'primaryColor', value:33 }, { id: 12, name: '黄染棉1级', flag: false, filter: 'primaryColor', value:14 }, { id: 13, name: '黄染棉2级', flag: false, filter: 'primaryColor', value:24 }],
+				ysj_items_list: [{ id: 0, name: '不限', flag: true, filter: '', value: '' }, { id: 1, name: '白棉1级', flag: false, filter: 'primaryColor', value: 11 }, { id: 2, name: '白棉2级', flag: false, filter: 'primaryColor', value: 21 }, { id: 3, name: '白棉3级', flag: false, filter: 'primaryColor', value: 31 }, { id: 4, name: '白棉4级', flag: false, filter: 'primaryColor', value: 41 }, { id: 5, name: '白棉5级', flag: false, filter: 'primaryColor', value: 51 }, { id: 6, name: '淡点污棉1级', flag: false, filter: 'primaryColor', value: 12 }, { id: 7, name: '淡点污棉2级', flag: false, filter: 'primaryColor', value: 22 }, { id: 8, name: '淡点污棉3级', flag: false, filter: 'primaryColor', value: 32 }, { id: 9, name: '淡黄染棉1级', flag: false, filter: 'primaryColor', value:13 }, { id: 10, name: '淡黄染棉2级', flag: false, filter: 'primaryColor', value:23 }, { id: 11, name: '淡黄染棉3级', flag: false, filter: 'primaryColor', value:33 }, { id: 12, name: '黄染棉1级', flag: false, filter: 'primaryColor', value:14 }, { id: 13, name: '黄染棉2级', flag: false, filter: 'primaryColor', value:24 }, {id: 14,name: '无',flag: false,filter: 'primaryColor',value: 0}],
 			    mhlx_items_list: [{ id: 1, name: '手摘棉', flag: false, filter: 'packType', value:1 }, { id: 2, name: '机采棉', flag: false, filter: 'packType', value:2 }, { id: 3, name: '皮辊棉', flag: false, filter: 'cottonType', value:2 }, { id: 4, name: '长绒棉', flag: false, filter: 'cottonType', value:4 }],
 				order_items_list: [{ id: 0, name: '默认排序', temp: '默认排序', flag: true, filter: '', value: '' }, { id: 1, name: '长度', temp: '长度', flag: false, filter: 'lengthAvg', value: 'desc' }, { id: 2, name: '强力', temp: '强力', flag: false, filter: 'strongAvg', value: 'desc' }, { id: 3, name: '含杂', temp: '含杂', flag: false, filter: 'impurity', value: 'desc' }, { id: 4, name: '回潮', temp: '回潮', flag: false, filter: 'moisture', value: 'desc' }, { id: 5, name: '价格', temp: '价格', flag: false, filter: 'price', value:'desc' }],
 				importList:'',
@@ -1314,24 +1317,82 @@
 			// 滑块数值设置
 			formatTooltip(val) {
 				return val / 10;
-			  },
-			  //重置
-			clearSelect(){
+			},
+			//重置
+			resetclose () {
 				this.value=[260, 330]
 				this.value2=[240, 330];
 				this.value3=[30, 60];
 				this.value4=[0, 60];
 				this.value5=[40, 110];
-				this.value6=[780, 900];
-				this.isSee=false;
-				this.mhlx_items_list.forEach(function(i){
-					i.flag=false;
+        		this.value6=[780, 900];
+				this.isSee = false;
+				this.mhlx_items_list.forEach(function(i) {
+					i.flag = false;
 				});
-				this.Data_list.forEach(function(i){
-					i.flag=false;
+				this.Data_list.forEach(function(i) {
+					i.flag = false;
 				});
-				document.getElementById("wancheng").click('show');
-				this.shopzz=false;
+				this.address_list.forEach(function(i,index) {
+					if(index==0){
+						i.flag = true;
+					}else{
+						i.flag = false;
+					}
+				});
+				this.yieldly_list.forEach(function(i,index) {
+					if(index==0){
+						i.flag = true;
+					}else{
+						i.flag = false;
+					}
+				});
+				this.lx_items_list.forEach(function(i,index) {
+					if(index==0){
+						i.flag = true;
+					}else{
+						i.flag = false;
+					}
+				});
+				this.ysj_items_list.forEach(function(i,index) {
+					if(index==0){
+						i.flag = true;
+					}else{
+						i.flag = false;
+					}
+				});
+				this.mhlx_items_list.forEach(function(i,index){
+					i.flag = false;
+				});
+				this.paramsSidings = 0
+				this.$nextTick(() => {
+					this.$refs.placeOfOrigin.updateParamsSidings(0)
+					this.$refs.placeOfOrigin.ResetFuc(1)
+					this.$refs.placeOfOrigin1.ResetFuc(1)
+				})
+				this.ResetFig = 1
+				this.isSee1 = false;
+				this.isSee2 = false;
+				this.isSee3 = false;
+				this.isSee4 = false;
+				this.isSee5 = false;
+				this.isSee6 = false;
+				this.$http.post('/wx/listing/getListingFineList?&order=price&asc=true' ).then((response) => {
+					this.warehouseList = response.entity.list;
+					this.totalPage = response.entity.totalPage;
+					this.pageCurrent = 1;
+					// console.log(response);
+					this.loading = false;
+					this.pagesize = response.entity.pageSize;
+					this.pageNum = 1;
+					this.paramsBoth = '';
+					if (response.entity.totalRow == 0) {
+						this.resshow = true;
+					} else {
+						this.resshow = false;
+					}
+					window.scrollTo(0, 0);
+				})
 			},
 			//上拉加载
 			onScroll() {
@@ -2028,7 +2089,7 @@
 					UserEnquiries: ( num ? num : 0 ) + type
 				})
 				// 存储
-				this.$store.dispatch('OPREATING_INFO_SET_LOA')
+				this.$store.dispatch('CLOSE_SESSIONSTORAGE')
 			}
 		}
 
@@ -2360,17 +2421,39 @@
 					color: #ffffff;
 					display: inline-block;
 					border: 0;
-					width: 50%;
+					width: 32%;
 					height: 50px;
-					font-size: .32rem;
+					font-size: .3rem;
 				}
 
 				.chongzhi {
+					width: 40%;
 					background: #fd7320;
 				}
 
 				.wancheng {
+					width: 35%;
 					background: #14bab4;
+				}
+				.reset{
+					width: 25%;
+					color: #14BAB4;
+					padding-left: 20px;
+					background: #E9F6F6;
+					position: relative;
+					display: inline-block;
+					line-height: 50px;
+					font-size: 0.3rem;
+					i{
+						position: absolute;
+						background: url('../../assets/icon/delete.png') no-repeat;
+						background-size: 100%;
+						width: 20px;
+						height: 24px;
+						top: 14px;
+						left: 17%;
+						z-index: 1;
+					}
 				}
 			}
 		}
@@ -2642,7 +2725,7 @@
 		top: 1.06rem;
 		background: #fff;
 		z-index: 99;
-		width: calc(100% - .5rem);
+		width: calc(100% - .2rem) !important;
 		padding: .12rem;
 		.swiper-notification{
 			display: none !important;

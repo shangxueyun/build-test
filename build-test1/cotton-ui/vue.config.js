@@ -33,17 +33,23 @@ module.exports = {
   devServer: {
     host: '0.0.0.0',
     port: port,
-    proxy: process.env.VUE_APP_BASEURL,
     disableHostCheck: true,
-    // proxy: {
-    //   '/': {
-    //     target: 'https://test.unioncotton.com/',
-    //     changeOrigin: true,
-    //     pathRewrite: {
-    //       '^/': '/'
-    //     }
-    //   },
-    // }
+    proxy: {
+      '/cotton-admin-app': {
+        target: 'http://192.168.1.254:8911/cotton-admin-app',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/cotton-admin-app': '/'
+        }
+      },
+      '/Yapi': {
+        target: 'http://192.168.1.254:8911/cotton-admin-app',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/Yapi': '/'
+        }
+      },
+    }
   },
   configureWebpack: {
     name: name,

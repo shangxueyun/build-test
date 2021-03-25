@@ -6,11 +6,11 @@
 		</div>
 		<div class="addHeight"></div>
 		<div class="cart_list" v-if="!resshow">
-			<ul v-for="(item,ind) in cartList">
-				<li class="cart_inx" v-for="(list,index) in cartList[ind]" :value="list.listingID">
+			<ul v-for="(item,ind) in cartList" :key="ind">
+				<li class="cart_inx" v-for="(list,index) in cartList[ind]" :value="list.listingID" :key="index">
 					<div class="cart_l">
 						<input class="radio_type radio_type_chick" type="checkbox" name="type" v-model='checkList' :data-memberID="list.memberID"
-						 :data-price='list.price' :data-pubweight='list.pubWeight' :value="list.listingID" :data-index="list.indexCode"
+						 :data-price='list.price' :data-pubweight='list.amountType!=8?list.pubWeight:list.amount' :value="list.listingID" :data-index="list.indexCode"
 						 @click="parice" />
 					</div>
 					<div class="cart_r" @click="godetails(list.batchID,list.listingID,list.listingType)">
@@ -24,11 +24,11 @@
 							<p class="top_date">{{list.listingDate.substring(5,11)}}</p>
 						</div>
 						<div class="res_con">
-							<div><span class="title">长度</span></br><span class="num">{{list.lengthAvg}}</span></div><i></i>
-							<div><span class="title">强力</span></br><span class="num">{{list.strongAvg}}</span></div><i></i>
-							<div><span class="title">马值</span></br><span class="num">{{list.mikeAvg}}</span></div><i></i>
-							<div><span class="title">含杂率</span></br><span class="num">{{list.impurity}}</span></div><i></i>
-							<div><span class="title">回潮率</span></br><span class="num">{{list.moisture}}</span></div>
+							<div><span class="title">长度</span><br><span class="num">{{list.lengthAvg}}</span></div><i></i>
+							<div><span class="title">强力</span><br><span class="num">{{list.strongAvg}}</span></div><i></i>
+							<div><span class="title">马值</span><br><span class="num">{{list.mikeAvg}}</span></div><i></i>
+							<div><span class="title">含杂率</span><br><span class="num">{{list.impurity}}</span></div><i></i>
+							<div><span class="title">回潮率</span><br><span class="num">{{list.moisture}}</span></div>
 						</div>
 						<div class="cang">
 							<p>仓库：{{list.depotName}}</p><p class="zhishu" v-if="list.indexCode">{{list.indexCode}}<span v-if="list.basis>=0">+</span>{{list.basis}}</p>
@@ -36,7 +36,9 @@
 						<div class="res_bot wrap">
 							<div class="res_price">
 								<p class="weight_one"><span>{{list.pubPrice}}</span>元/吨</p>
-								<p class="weight_two">公重<span>{{list.pubWeight}}</span>吨</p>
+								<!-- <p class="weight_two">公重<span>{{list.pubWeight}}</span>吨</p> -->
+								<p class="weight_two" v-if="list.amountType!=8">公重<span>{{list.pubWeight}}</span> 吨</p>
+								<p class="weight_two" v-if="list.amountType==8">仓重<span>{{list.amount}}</span> 吨</p>
 							</div>
 							<!-- <input class="res_btn" type="button" value="加入购物车"> -->
 							<!-- <img class="shanchu" src="../../assets/img/shanchu.png" @click.stop="cartRemove(list.listingID,index,ind,list.indexCode,list.price,list.pubWeight)" alt=""> -->
@@ -81,7 +83,7 @@
 				<div class="select">
 					<p class="bt">取货方式：</p>
 					<el-radio-group v-model="radio" class="select_inp">
-						<el-radio v-for="(item,index) in way" :label="index">{{item.deliveryTypeName}}</el-radio>
+						<el-radio v-for="(item,index) in way" :label="index" :key="index">{{item.deliveryTypeName}}</el-radio>
 					</el-radio-group>
 				</div>
 				<div class="sure_btn">

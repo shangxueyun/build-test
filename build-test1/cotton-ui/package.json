@@ -5,7 +5,7 @@
   "author": "棉联",
   "license": "MIT",
   "scripts": {
-    "dev": "vue-cli-service serve",
+    "dev": "vue-cli-service serve --mode development",
     "test": "vue-cli-service serve --mode test",
     "build:test": "vue-cli-service build --mode test",
     "build:prod": "vue-cli-service build --mode production",
@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@riophae/vue-treeselect": "0.4.0",
+    "JSONPath": "^0.11.2",
     "axios": "0.18.1",
     "clipboard": "2.0.4",
     "echarts": "4.2.1",

@@ -142,14 +142,35 @@
           <b style="color: #FE8A51">{{ '固定价 :' }}</b>
         </template>
         <template v-else>
-          <b style="color: #FE8A51">{{ `${listChild.indexCode} :` }}</b>
+          <template v-if="purchasing == 2">
+            <template v-if="listStatus == 0">
+              <select autocomplete="off" class="inputValue selectindexCode" type="number" :name="'indexCode,' + listChild.listID" v-model="listChild.indexCode">
+                <option v-for="(item, index) in indexCodeOption" :key="index" :value="item" :selected="listChild.indexCode == item">{{ item }}</option>
+              </select>
+            </template>
+            <template v-else>
+              <template v-if="listStatus == 3">
+                <select :disabled="basisDisabledSelect" autocomplete="off" class="inputValue selectindexCode" type="number" :name="'indexCode,' + listChild.listID" v-model="listChild.indexCode">
+                  <option v-for="(item, index) in indexCodeOption" :key="index" :value="item" :selected="listChild.indexCode == item">{{ item }}</option>
+                </select>
+              </template>
+              <template v-else>
+                <b style="color: #FE8A51">{{ `${listChild.indexCode} :` }}</b>
+              </template>
+            </template>
+          </template>
+          <template v-else>
+            <b style="color: #FE8A51">{{ `${listChild.indexCode} :` }}</b>
+          </template>
         </template>
           <template v-if="purchasing == 2">
             <template v-if="listChild.indexCode == ''">
-              <template v-if="listStatus == 0 || listStatus == 3">
-                <template v-if="listStatus == 0">
+              <template v-if="listStatus == 0 || listStatus == 2 || listStatus == 3">
+                <template v-if="listStatus == 2">
                   <!-- 测试说的禁止修改 -->
-                  <span>{{ listChild.supBasisPrice }}</span>
+                  <span v-show="!waitingReplyPrice">{{ listChild.supBasisPrice }}</span>
+				  <input v-show="waitingReplyPrice" style="margin: 0;" @input="listChild.supBasisPrice=Math.abs(Number(listChild.supBasisPrice));listChild.price=Number(listChild.supBasisPrice)+Number(listChild.fixedPriceDifference);changThiaNum($event);" @blur="validateInput;" autocomplete="off" class="inputValue" type="number" :name="'supBasisPrice,' + listChild.listID" v-model="listChild.supBasisPrice">
+				  <input style="margin: 0;" @click="inputValueListChild($event,listChild)" autocomplete="off" class="inputValue" type="hidden" :name="'price,' + listChild.listID" :value="listChild.price">
                   <!-- <input @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'price,' + listChild.listID" v-model="listChild.price"> -->
                 </template>
                 <template v-else>
@@ -161,7 +182,7 @@
                 <!-- 采购询盘 销售询盘 ---已成交状态中固定价不显示 -->
                 <!-- <span>{{ listChild.supBasisPrice }}</span> -->
                 <template v-if="listStatus == 7">
-                  <span>-</span>
+                  <span>{{ listChild.supBasisPrice }}</span>
                 </template>
                 <template v-else>
                   <span>{{ listChild.supBasisPrice }}</span>
@@ -171,14 +192,15 @@
             <template v-else>
               <template v-if="listStatus == 0 || listStatus == 3">
                 <template v-if="listStatus == 0">
-                  <input @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'supBasisPrice,' + listChild.listID" v-model="listChild.supBasisPrice">
+                  <input style="margin: 0;" @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'supBasisPrice,' + listChild.listID" v-model="listChild.supBasisPrice">
                 </template>
                 <template v-else>
-                  <input @blur="validateInput" autocomplete="off" class="inputValue" :disabled="basisDisabled" type="number" :name="'supBasisPrice,' + listChild.listID" v-model="listChild.supBasisPrice">
+                  <input style="margin: 0;" @blur="validateInput" autocomplete="off" class="inputValue" :disabled="basisDisabled" type="number" :name="'supBasisPrice,' + listChild.listID" v-model="listChild.supBasisPrice">
                 </template>
               </template>
               <template v-else>
-                <span>{{ listChild.supBasisPrice }}</span>
+                <span v-show="!waitingReplyPrice">{{ listChild.supBasisPrice }}</span>
+                <input v-show="waitingReplyPrice" style="margin: 0;" @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'supBasisPrice,' + listChild.listID" v-model="listChild.supBasisPrice">
               </template>
             </template>
           </template>
@@ -187,7 +209,7 @@
               <!-- 采购询盘 销售询盘 ---已成交状态中固定价不显示 -->
               <!-- <span>{{ listChild.price }}</span> -->
               <template v-if="listStatus == 7">
-                <span>-</span>
+                <span>{{ listChild.price }}</span>
               </template>
               <template v-else>
                 <span>{{ listChild.price }}</span>
@@ -242,15 +264,21 @@
               <span style="color: #FE8A51">{{ listChild.price }}</span>
             </div> -->
             <!-- 挂盘期限 -->
-            <div class="list-td" style="width: 55%">
+            <div class="list-td" style="width: 80%">
               成交时间 ：
-              <span>{{ listChild.lastPriceTime }}</span>
+              <span>{{ listChild.successTime }}</span>
             </div>
           </template>
           <template v-else>
+            <!-- <div class="list-td" style="width: 45%">
+              买方出价 :
+              <span style="color: #FE8A51">{{ listChild.price }}</span>
+            </div> 
+            2020-09-14合约买方出价改挂盘成交价并取值为价格加基差-->
             <div class="list-td" style="width: 45%">
               挂盘成交价 :
-              <span style="color: #FE8A51">{{ listChild.platePrice }}</span>
+              <span v-if="!listChild.currentPriceType" style="color: #FE8A51">{{ listChild.price + listChild.supBasisPrice }}</span>
+              <span v-else>现价成交</span>
             </div>
             <div class="list-td" style="width: 58%">
               挂盘期限:
@@ -261,8 +289,16 @@
         <template v-else>
             <template v-if="listChild.indexCode != ''">
               <div class="list-td" style="width: 45%">
-                买方出价 :
-                <span style="color: #FE8A51">{{ listChild.price }}</span>
+                <template v-if="listStatus == 3">
+                  买方出价 :
+                  <input @blur="validateInput" :disabled="closingCost" autocomplete="off" class="inputValue" type="number" :name="'price,' + listChild.listID" :value="listChild.price">
+                </template>
+                <template v-else>
+                  挂盘期货价 :
+                  <span v-if="!listChild.currentPriceType" style="color: #FE8A51">{{ listChild.price }}</span>
+                  <span v-else-if="!waitingReplyPrice && listChild.currentPriceType">现价成交</span>
+                  <input v-show="waitingReplyPrice && listChild.currentPriceType" @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'price,' + listChild.listID" value="">
+                </template>
               </div>
               <div class="list-td" style="width: 58%">
                 挂盘期限:
@@ -273,14 +309,14 @@
       </div>
     </template>
     <!-- 买方出价/挂盘期货价 -->
-    <template v-if="purchasing == 2">
+    <!-- <template v-if="purchasing == 2">
       <div class="list-tr three" v-show="listStatus == 3 && closingCost">
         <div class="list-td" style="width: 90%">
           成交价 :
           <input @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'platePrice,' + listChild.listID" :value="listChild.price">
         </div>
       </div>
-    </template>
+    </template> -->
     <!-- 采购 -->
     <template v-else-if="purchasing == 1">
       <template v-if="listChild.indexCode == ''">
@@ -299,20 +335,26 @@
               </div>
             </template>
             <!-- 挂盘期限 -->
-            <div class="list-td" style="width: 58%">
+            <div class="list-td" style="width: 80%">
               成交时间 ：
-              <span>{{ listChild.lastPriceTime }}</span>
+              <span>{{ listChild.successTime }}</span>
             </div>
           </div>
         </template>
       </template>
       <template v-else>
-        <div class="list-tr three relative" v-if="listStatus != 0">
+        <div class="list-tr three relative" :style="listStatus == 1 || listStatus == 3|| listStatus == 4?'display: block;':''" v-if="listStatus != 0">
           <!-- 挂盘期货价 -->
           <template v-if="listStatus == 7 || listStatus == 8">
-            <div class="list-td" style="width: 45%">
+            <!-- <div class="list-td" style="width: 45%">
               买方出价 :
               <span style="color: #FE8A51">{{ listChild.price }}</span>
+            </div> 
+            2020-09-14合约买方出价改挂盘成交价并取值为价格加基差-->
+            <div class="list-td" style="width: 45%">
+              挂盘成交价 :
+              <span v-if="!listChild.currentPriceType" style="color: #FE8A51">{{ listChild.price + listChild.basisPrice }}</span>
+              <span v-else>现价成交</span>
             </div>
             <div class="list-td" style="width: 58%">
               挂盘期限:
@@ -322,17 +364,20 @@
           <template v-else>
             <template v-if="listStatus != 2">
               <!-- 挂盘操作修改状态功能 -->
-              <div class="list-td" style="width: 45%">
+              <div class="list-td" :style="listStatus == 1 || listStatus == 3|| listStatus == 4?'width: 100%':'width: 45%'" style="width: 45%">
                 挂盘期货价 :
                   <template v-if="listStatus == 3">
-                    <input @blur="validateInput" autocomplete="off" class="inputValue" :disabled="priceDisabled" type="number" :name="'price,' + listChild.listID" v-model="listChild.price">
+                    <input :style="listStatus == 1 || listStatus == 3|| listStatus == 4?'width: 24%':'width: 38%'" @blur="validateInput" autocomplete="off" class="inputValue" :disabled="priceDisabled" type="number" :name="'price,' + listChild.listID" v-model="listChild.price">
                   </template>
                   <template v-else>
-                    <input @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'price,' + listChild.listID" v-model="listChild.price">
+                    <input :style="listStatus == 1 || listStatus == 3|| listStatus == 4?'width: 24%':'width: 38%'" @blur="validateInput" autocomplete="off" class="inputValue" type="number" :name="'price,' + listChild.listID" v-model="listChild.price">
                   </template>
+                  <input @click="presentPricefuc" v-if="listStatus == 1 || listStatus == 3|| listStatus == 4" :disabled="listStatus == 3 && !presentPrice" style="float: none;margin-left: .1rem;vertical-align: middle;margin-top: -0.08rem;" :id="'currentPriceType,' + listChild.listID" type="checkbox" :name="'currentPriceType,' + listChild.listID + ',' + listStatus" />
+                  <span v-if="listStatus == 3 && !presentPrice" style="color: #ccc">现价成交</span>
+                  <span v-else @click="presentPricefuc">现价成交</span>
               </div>
               <!-- 挂盘期限 -->
-              <div class="list-td" style="width: 58%">
+              <div class="list-td" :style="listStatus == 1 || listStatus == 3|| listStatus == 4?'width: 100%':'width: 58%'">
                 挂盘期限:
                   <template v-if="listStatus == 3">
                     <!-- <template v-if="appVersion.includes('Android')">
@@ -341,7 +386,7 @@
                     <template v-else>
                       <input autocomplete="off" type="text" :id="'mydate' + listChild.listID" readonly="readonly" :disabled="listingValidityDisabled" :name="'listingValidity,' + listChild.listID" style="height: 20px;width: 45%" @blur="listingValidityChange($event, listChild)" :defaultValue="listChild.listingValidity" :value="listChild.listingValidity">
                     </template> -->
-                    <input autocomplete="off" type="text" :id="'mydate' + listChild.listID" readonly="readonly" :disabled="listingValidityDisabled" :name="'listingValidity,' + listChild.listID" style="height: 20px;width: 42%" :defaultValue="listChild.listingValidity" :value="listChild.listingValidity"> 15:00
+                    <input autocomplete="off" type="text" :style="listStatus == 1 || listStatus == 3|| listStatus == 4?'width: 28%;height: 20px;':'height: 20px;width: 42%'" :id="'mydate' + listChild.listID" readonly="readonly" :disabled="listingValidityDisabled" :name="'listingValidity,' + listChild.listID" :defaultValue="listChild.listingValidity" :value="listChild.listingValidity"> 15:00
                     <!-- <input autocomplete="off" type="text" :disabled="listingValidityDisabled" :name="'listingValidity,' + listChild.listID" style="height: 20px;width: 45%"  :defaultValue="listChild.listingValidity" :value="listChild.listingValidity"> -->
                   </template>
                   <template v-else>
@@ -351,7 +396,7 @@
                     <template v-else>
                       <input autocomplete="off" type="text" :id="'mydate' + listChild.listID" readonly="readonly" :name="'listingValidity,' + listChild.listID" style="height: 20px;width: 45%" @blur="listingValidityChange($event, listChild)" :defaultValue="listChild.listingValidity" :value="listChild.listingValidity">
                     </template> -->
-                    <input autocomplete="off" :id="'mydate' + listChild.listID" readonly="readonly" type="text" :name="'listingValidity,' + listChild.listID" style="height: 20px;width: 42%" :defaultValue="listChild.listingValidity" :value="listChild.listingValidity"> 15:00
+                    <input autocomplete="off" :style="listStatus == 1 || listStatus == 3|| listStatus == 4?'width: 28%;height: 20px;':'height: 20px;width: 42%'" :id="'mydate' + listChild.listID" readonly="readonly" type="text" :name="'listingValidity,' + listChild.listID" :defaultValue="listChild.listingValidity" :value="listChild.listingValidity"> 15:00
                     <!-- <input autocomplete="off" type="text" :name="'listingValidity,' + listChild.listID" style="height: 20px;width: 45%"  :defaultValue="listChild.listingValidity" :value="listChild.listingValidity"> -->
                   </template>
               </div>
@@ -359,7 +404,8 @@
             <template v-else>
               <div class="list-td" style="width: 45%">
                 挂盘期货价 :
-                <span style="color: #FE8A51">{{ listChild.price }}</span>
+                <span v-if="!listChild.currentPriceType" style="color: #FE8A51">{{ listChild.price }}</span>
+                <span v-else>现价成交</span>
               </div>
               <!-- 挂盘期限 -->
               <div class="list-td" style="width: 58%">
@@ -397,10 +443,17 @@
     <div class="list-tr" style="flex-wrap: wrap;" v-if="purchasing == 2 && listStatus == 2">
       <div class="list-td line" style="width: 100%;">
         回复 : 
-        <input class="inputValue" type="radio" :name="'type,' + listChild.listID" @change="hangOperation" value="GP_SUCCESS"> 挂盘成功
-        <input class="inputValue" type="radio" :name="'type,' + listChild.listID" @change="hangOperation" value="BIDDING" > 需要竞价
-        <input class="inputValue" type="radio" :name="'type,' + listChild.listID" @change="hangOperation" value="SOLD" > 已售
-        <input class="inputValue" type="radio" :name="'type,' + listChild.listID" @change="hangOperation" value="REVOKED" > 已撤盘
+        <template v-if="listChild.currentPriceType||listChild.indexCode== ''">
+          <input class="inputValue" type="radio" :name="'type,' + listChild.listID" @change="hangOperation" value="TRADED" > 已成交
+          <input class="inputValue" type="radio" :name="'type,' + listChild.listID" @change="hangOperation" value="SOLD" > 已售
+        </template>
+        <template v-else>
+          <input class="inputValue" type="radio" :name="'type,' + listChild.listID" @change="hangOperation" value="GP_SUCCESS"> 挂盘成功
+          <input class="inputValue" type="radio" :name="'type,' + listChild.listID" @change="hangOperation" value="BIDDING" > 需要竞价
+          <input class="inputValue" type="radio" :name="'type,' + listChild.listID" @change="hangOperation" value="SOLD" > 已售
+          <input class="inputValue" type="radio" :name="'type,' + listChild.listID" @change="hangOperation" value="REVOKED" > 已撤盘          
+        </template>
+
         <p v-if="biddingInstructionsDis"><span style="color: #14BAB4">{{ biddingInstructions }}</span>  <span v-if="biddingInstructionsType != 1">本次最低出价 : <span style="color: #14BAB4">{{ biddingInstructionsPrice }}元</span></span></p>
       </div>
     </div>
@@ -446,7 +499,7 @@
         <span class="xian"></span>
         <div class="BIDDING_Popout-paddng-content">
           <p><input type="radio" :class="'radio' + listChild.listID" @change="bidTypeBidMinPrice" :name="'bidType,' + listChild.listID" value="1"> 只可竞价一次，对方出价未告知</p>
-          <p><input type="radio" :class="'radio' + listChild.listID" @change="bidTypeBidMinPrice" :name="'bidType,' + listChild.listID" value="2"> 可多次竞价，本次最低出价 <input @blur="validateInput" :disabled="bidMinPriceDisabled" autocomplete="off" type="number" :class="'radio' + listChild.listID" @input="bidTypeBidMinPrice" :name="'bidMinPrice,' + listChild.listID" :value="listChild.bidMinPrice">元</p>
+          <p><input type="radio" :class="'radio' + listChild.listID" @change="bidTypeBidMinPrice" :name="'bidType,' + listChild.listID" value="2"> 可多次竞价，本次最低出价 <input @blur="validateInput" :disabled="bidMinPriceDisabled" autocomplete="off" type="number" :class="'radio' + listChild.listID" @input="bidTypeBidMinPrice" :name="'bidMinPrice,' + listChild.listID" value="">元</p>
         </div>
         <div class="BIDDING_Popout-paddng-button">
           <button :listID="listChild.listID" @click="BIDDING_PopoutSubmit">确认</button>
@@ -496,6 +549,7 @@ export default {
       amountDisabled: true, // 重量
       packNumDisabled: true, // 包数
       basisDisabled: true, // 基差
+      basisDisabledSelect: true, // 基差下拉
       notesDisabled: true, // 备注
       BIDDING_PopoutDis: false,
       bidMinPriceDisabled: true,
@@ -506,7 +560,9 @@ export default {
         // position_depotNameOption: [],
       },
       appVersion: window.navigator.appVersion, // 兼容
-      closingCost: false // 成交价flag
+      closingCost: true, // 成交价flag
+      presentPrice: false, // 现价成交flag
+      waitingReplyPrice: false
     }
   },
   computed: {
@@ -536,6 +592,7 @@ export default {
         // '2020-07-21': '周末',
       }
     },
+    indexCodeOption: [Object, Array], // 全局合约选择状态
     listStatus: { // 全局状态
       type: Number,
       default: 10
@@ -592,6 +649,9 @@ export default {
     //
     if (this.listChild.lastPriceTime)
       this.listChild.lastPriceTime = this.timeMMDDHH(this.listChild.lastPriceTime)
+	  // 
+	if (this.listChild.successTime)
+	  this.listChild.successTime = formatDate(this.listChild.successTime,true)
     //
     if (this.listChild.makeTime)
       this.listChild.makeTime = this.timeMMDDHH(this.listChild.makeTime)
@@ -640,14 +700,22 @@ export default {
           this.$emit('inputValueListChild', 'listingValidity', row.target.value + ' 15:00:00', ObjKey, checked.checked, checked.value)
         }
       },
+	  changThiaNum(ele){
+		  setTimeout(function(){
+			  ele.target.nextSibling.click()
+		  },1)
+		 
+	  },
       // 所有input值变化回调
       inputValueListChild (e, o) {
+		  console.log(e, o)
         // 根据key取对象
         let nameKey = e.target.name.split(',')
         let ObjKey = nameKey[1]
         nameKey = nameKey[0]
         let checked = document.getElementById('inputValuebatchID' + ObjKey)
         let flg
+		
         if (nameKey == 'batchID') {
           if (e.target.checked) {
             this.$emit('inputValueListChild', nameKey, e.target.value, ObjKey, e.target.checked, checked.value)
@@ -754,16 +822,21 @@ export default {
       },
       // radio选择触发
       hangOperation (row) {
+		  
         let nameKey = row.target.name.split(',')
         let ObjKey = nameKey[1]
         nameKey = nameKey[0]
+		console.log(row)
         // 挂盘中
         if (this.purchasing == 1) {
           if (this.listStatus == 3) {
             if (row.target.value == 'MODIFY_PRICE') {
+              this.presentPrice =true
               this.priceDisabled = false
               this.listingValidityDisabled = false
             } else {
+              document.getElementById('currentPriceType,' + ObjKey).checked = false
+              this.presentPrice = false
               this.priceDisabled = true
               this.listingValidityDisabled = true
             }
@@ -807,9 +880,28 @@ export default {
 
         if (this.purchasing == 2 && this.listStatus == 3) {
           if (row.target.value == 'TRADED') {
-            this.closingCost = true
-          } else {
             this.closingCost = false
+            this.basisDisabledSelect = true
+            this.basisDisabled = false
+          } else {
+            this.closingCost = true
+            if (row.target.value == 'DATA_CHANGE') {
+              this.basisDisabledSelect = false
+              this.basisDisabled = false
+            } else {
+              this.basisDisabledSelect = true
+              this.basisDisabled = true
+            }
+            
+          }
+        }
+
+        // 现价成交
+        if (this.purchasing == 2 && this.listStatus == 2) {
+          if (row.target.value == 'TRADED') {
+            this.waitingReplyPrice = true
+          } else {
+            this.waitingReplyPrice = false
           }
         }
       },
@@ -865,9 +957,36 @@ export default {
             this.BIDDING_PopoutDis = true
             this.biddingInstructionsDis = false
           } else {
-            this.radiolistchecked(listID)
-            this.BIDDING_PopoutDis = false
-            this.biddingInstructionsDis = true
+            let flg
+            if (!(Number(this.biddingInstructionsPrice) > 0)) {
+              flg = true
+            } else {
+              if (Number(this.biddingInstructionsPrice).toString().includes('.')) {
+                flg = true
+              } else {
+                //  || !(Number(ele.target.value)%5 == 0)
+                let v = this.biddingInstructionsPrice.split('')[this.biddingInstructionsPrice.split('').length - 1]
+                if (v != 0 && v != 5) {
+                  flg = true
+                }
+              }
+              // if (nameKey == 'price' && Number(this.biddingInstructionsPrice).toString().length > 5) {
+              //   flg = true
+              // }
+            }
+            if (Number(this.biddingInstructionsPrice).toString().includes('.')) {
+              this.biddingInstructionsPrice = Number(this.biddingInstructionsPrice).toFixed()
+              flg = true
+            }
+
+            if (flg) {
+              this.$message.warning('最低出价必须为正整数,并且尾数为0或5的数字')
+              this.biddingInstructionsPrice = ''
+            } else {
+              this.radiolistchecked(listID)
+              this.BIDDING_PopoutDis = false
+              this.biddingInstructionsDis = true
+            }
           }
         } else {
           this.radiolistchecked(listID)
@@ -876,6 +995,7 @@ export default {
         }
       },
       validateInput (ele, name, value) {
+		  console.log(ele, name, value)
         // 根据key取对象
         let nameKey = ele.target.name.split(',')
         let ObjKey = nameKey[1]
@@ -908,8 +1028,16 @@ export default {
                 flg = true
               }
             }
+            if (nameKey == 'price' && Number(ele.target.value).toString().length > 5) {
+              flg = true
+            }
           }
         } else if (nameKey == 'basisPrice') {
+          if (Number(ele.target.value).toString().includes('.')) {
+            ele.target.value = Number(ele.target.value).toFixed()
+            flg = true
+          }
+        } else if (nameKey == 'supBasisPrice') {
           if (Number(ele.target.value).toString().includes('.')) {
             ele.target.value = Number(ele.target.value).toFixed()
             flg = true
@@ -921,13 +1049,13 @@ export default {
             this.$message.warning('重量必须为正整数或最小四位小数')
           } else if (nameKey == 'packNum') {
             this.$message.warning('包数必须为正整数')
-          } else if (nameKey == 'price') {
-            this.$message.warning('价格必须为正整数,并且尾数为0或5的数字')
-          } else if (nameKey == 'bidMinPrice'){
-            this.$message.warning('最低出价必须为正整数,并且尾数为0或5的数字')
-          }
+          } 
+          // else if (nameKey == 'price') {
+
+          //   this.$message.warning('请输入尾数0或5的5位正整数')
+          // }
           
-          if (nameKey != 'basisPrice') {
+          if (nameKey != 'basisPrice' && nameKey != 'price') {
             ele.target.value = ''
           }
           this.listChild[nameKey] = ele.target.value
@@ -958,6 +1086,37 @@ export default {
         var timeMMDDHHs = `${timeMMDDHHs1.split('-')[1]}/${timeMMDDHHs1.split('-')[2].split(' ')[0]} `
         timeMMDDHHs += `${(timeMMDDHHs1.split('-')[2].split(' ')[1]).split(':')[0]}:${(timeMMDDHHs1.split('-')[2].split(' ')[1]).split(':')[1]}`
         return timeMMDDHHs
+      },
+      presentPricefuc (ele) {
+        let sib = ele.target.previousSibling
+        let flg,nameKey
+        if (sib.type != 'number') {
+          if (sib.checked) {
+            flg = 0
+            sib.checked = false
+            sib.previousSibling.disabled = false
+          } else {
+            flg = 1
+            sib.checked = true
+            sib.previousSibling.disabled = true
+          }
+          nameKey = sib.name.split(',')
+        } else {
+          if (ele.target.checked) {
+            flg = 1
+            ele.target.previousSibling.disabled = true
+          } else {
+            flg = 0
+            ele.target.previousSibling.disabled = false
+          }
+          nameKey = ele.target.name.split(',')
+        }
+        // 根据key取对象
+        let ObjKey = nameKey[1]
+        nameKey = nameKey[0]
+        let checked = document.getElementById('inputValuebatchID' + ObjKey)
+        checked.checked = true
+        this.$emit('inputValueListChild', nameKey, flg, ObjKey, checked.checked, checked.value)
       }
   }
 }
@@ -1238,6 +1397,24 @@ export default {
           margin-top: 0;
         }
       }
+    }
+    .selectindexCode{
+      border: none;
+      font-size: .22rem;
+      padding: 0px 4px;
+      height: 22px;
+      margin: 6px auto;
+      margin-right: 2px;
+      float: left;
+      opacity: 1;
+      background: #DDDDDD;
+    }
+    select:disabled{
+      background: #ddd;
+      opacity: 1;
+    }
+    input:disabled{
+       background: #fff;;
     }
   }
 </style>

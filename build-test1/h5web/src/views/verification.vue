@@ -89,12 +89,12 @@
 					// alert(localStorage.openID);
 					if(response.success){
 						// localStorage.openID = this.openID;
+						this.$store.dispatch('USER_INFO_GET')
+						this.$store.dispatch('OPREATING_INFO_GET')
 						this.$message({
 						          message: '登录成功',
 						          type: 'success',
 								  onClose:() =>{
-									this.$store.dispatch('USER_INFO_GET')
-									this.$store.dispatch('OPREATING_INFO_GET')
 									this.$router.push({
 										path: '/personal'
 									})  

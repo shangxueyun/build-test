@@ -62,7 +62,7 @@ export function formatTime(time, option) {
 
 /**
  * @param {string} url
- * @returns {Object}
+ * @returns {Object} href转化对象解析
  */
 export function getQueryObject(url) {
   url = url == null ? window.location.href : url

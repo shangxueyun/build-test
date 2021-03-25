@@ -17,7 +17,8 @@
 				<p>商城</p>
 			</router-link>
 			<router-link to="/personal/waitEnquiry" style="position: relative;">
-				<span v-if="userInfo.user" :UserEnquiries="UserEnquiries" class="enquiriesNum">{{ UserEnquiries }}</span>
+				<span v-if="userInfo.user && UserEnquiries > 20" :UserEnquiries="UserEnquiries" class="enquiriesNum big">20+</span>
+				<span v-if="userInfo.user && UserEnquiries <= 20" :UserEnquiries="UserEnquiries" class="enquiriesNum">{{ UserEnquiries }}</span>
 				<img class="wei" src="./assets/img/dibugouwuche@2x.png" alt="">
 				<img class="dian" src="./assets/img/dibugouwuchedianji@2x.png" alt="">
 				<p>待询盘</p>
@@ -46,7 +47,7 @@
 				<p>我的</p>
 			</router-link>
 		</div>
-		<div class="fiexd_kefu">
+		<div class="fiexd_kefu" v-if="!$route.path.includes('points')">
 				<a href="https://care60.live800.com/live800/chatClient/chatbox.jsp?companyID=80003104&configID=1383" v-if="kefu">
 					<img src="./assets/img/kefu_icon.png" alt="">
 				</a>
@@ -70,7 +71,7 @@ import { mapState } from 'vuex'
 			return {
 				openId: '',
 				appId: 'wx768e12b1aafcb7a2',
-				secret:'1b5e1f37b79daa5bbbd14dc7dbc753ec',
+				userInfo: '',
 				kefu:true,
 			}
 		},
@@ -78,19 +79,43 @@ import { mapState } from 'vuex'
 			// 待询盘数量
 			UserEnquiries: state => state.operatingInfo.operatingInfo.UserEnquiries ? state.operatingInfo.operatingInfo.UserEnquiries : 0,
 			// 全局用户信息
-			userInfo: state => state.userInfo.userInfo
+			userInfoM: state => state.userInfo.userInfo
 		}),
 		beforeCreate () {
-			// // 加载项目代入user信息
+			// // // 加载项目代入user信息
 			this.$store.dispatch('USER_INFO_GET')
 			this.$store.dispatch('OPREATING_INFO_GET')
 		},
-		
+		watch: {
+			userInfoM (value) {
+				this.userInfo = value
+			}
+		},
 		methods: {
-			getCodeApi(state) { //获取code   
+			getCodeApi(state) { //获取code  
+				let appid
+				let origin = window.location.origin
+				let protocol = window.location.protocol || 'https:'
+				if (process.env.NODE_ENV === 'production') { // 生产环境
+					appid = 'wx768e12b1aafcb7a2'
+				} else if (process.env.NODE_ENV === 'test') { // 开发测试环境
+					appid = 'wx595c41d76974579c' //测试
+				} else { // 本地开发环境
+					appid = 'wx595c41d76974579c' //测试
+				}
+			
+				// return Url
+				// let appid
+				// 判断测试正式
+				if (!appid) {
+					if (window.location.host.includes('mob.unioncotton.com'))
+					appid = 'wx768e12b1aafcb7a2' //正式
+					else
+					appid = 'wx595c41d76974579c' //测试
+				}
 				let urlNow = encodeURIComponent(window.location.href);
 				let scope = 'snsapi_userinfo'; //snsapi_userinfo   //静默授权 用户无感知	snsapi_base
-				let appid = 'wx768e12b1aafcb7a2';
+				// let appid = 'wx768e12b1aafcb7a2';
 				let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + urlNow +
 					'&response_type=code&scope=' + scope + '&state=' + state + '#wechat_redirect';
 				window.location.replace(url);
@@ -112,35 +137,46 @@ import { mapState } from 'vuex'
 			}
 		},
 		created() { //返回值
+			var wechatInfo = navigator.userAgent.match(/MicroMessenger\/([\d\.]+)/i) ;
+			var ua = window.navigator.userAgent.toLowerCase();
+			if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+				if (parseInt(wechatInfo[1]) < 7) {
+					alert("当前微信版本不支持，请前往微信设置进行更新操作");
+					WeixinJSBridge.call('closeWindow');
+				}
+			}
+			
 			// alert(window.location.href);
-				var ua = window.navigator.userAgent.toLowerCase();
-		  		if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+				// var ua = window.navigator.userAgent.toLowerCase();
+		  // 		if (ua.match(/MicroMessenger/i) == 'micromessenger') {
 		            // if(localStorage.openID==''||!localStorage.openID){
 						
-		            	let code = this.getUrlKey("code");
-						// alert(code);
-		            	if (code) {
-		            		this.$http.post('/wx/api/redirectUrl?code='+code+'').then((response) => {
-		            			if(response.entity.unionid){
-		            				localStorage.openID = response.entity.unionid;
-									localStorage.gzhOpenID = response.entity.openid;
-									
-									
-									// console.log(localStorage.openID)
-		            			}
-								this.$http.post('/wx/index_h5/isSubscribe').then((response) => {
-									if(response.data==1){
-										localStorage.qrShow=true;
-									}else{
-										localStorage.qrShow=false;
-									}
-								});
-		            			// localStorage.openID = '13800138000'
-		            		})
-		            	} else {	
-		            		this.getCodeApi("123");
-		            	}
-		        }else {
+		            	// let code = this.getUrlKey("code");
+						// // alert(code);
+		            	// if (code) {
+		            	// 	this.$http.post('/wx/api/redirectUrl?code='+code+'').then((response) => {
+		            	// 		if(response.entity.unionid){
+		            	// 			localStorage.openID = response.entity.unionid;
+						// 			localStorage.gzhOpenID = response.entity.openid;
+						// 		}
+						// 		// openid 换换取成功获取user信息
+						// 		// 加载项目代入user信息
+						// 		this.$store.dispatch('USER_INFO_GET')
+						// 		this.$store.dispatch('OPREATING_INFO_GET')
+								
+						// 		this.$http.post('/wx/index_h5/isSubscribe').then((response) => {
+						// 			if(response.data==1){
+						// 				localStorage.qrShow=true;
+						// 			}else{
+						// 				localStorage.qrShow=false;
+						// 			}
+						// 		});
+		            	// 		// localStorage.openID = '13800138000'
+		            	// 	})
+		            	// } else {	
+		            	// 	this.getCodeApi("123");
+		            	// }
+		        // }else {
 					// this.$http.post('/wx/index_h5/isSubscribe').then((response) => {
 					// 	if(response.data==1){
 					// 		localStorage.qrShow=true;
@@ -150,11 +186,15 @@ import { mapState } from 'vuex'
 					// 	
 					// 	
 					// });
-		            return false;
-		 		}
+		   //          return false;
+		 		// }
 			// 
 		},
 		mounted() {
+			this.userInfo = this.userInfoM
+			if (JSON.stringify(this.userInfo) == '{}')
+				this.userInfo = JSON.parse(sessionStorage.getItem('userInfo')) ? JSON.parse(sessionStorage.getItem('userInfo')) : {}
+				
 			if(localStorage.openID){
 				this.kefu=true;
 			}else{
@@ -549,12 +589,26 @@ import { mapState } from 'vuex'
 		position: absolute;
 		top: 0;
 		right: .4rem;
-		width: 14px;
-		height: 14px;
-		line-height: 14px;
-		border-radius: .14rem;
+		width: 16px;
+		height: 16px;
+		line-height: 16px;
+		border-radius: .35rem;
 		background: red;
 		color: #fff;
 		font-size: .24rem;
+	}
+	.big{
+		width: .4rem;
+		height: .4rem;
+		line-height: .4rem;
+		border-radius: .4rem;
+		font-size: .22rem;
+	}
+</style>
+
+<style>
+	/* // 日期禁用字体大小 */
+	.layui-laydate .laydate-disabled {
+		font-size: 0.24rem !important;
 	}
 </style>

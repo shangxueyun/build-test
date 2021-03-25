@@ -53,6 +53,7 @@
 								<span v-if="type==='33'&&index==0&&item.primaryColor" :key="type">淡黄染棉3级</span>
 								<span v-if="type==='14'&&index==0&&item.primaryColor" :key="type">黄染棉1级</span>
 								<span v-if="type==='24'&&index==0&&item.primaryColor" :key="type">黄染棉2级</span>
+								<span v-if="type==='0'&&index==0&&item.primaryColor" :key="type">无</span>
 							</template>
 						</p>
 						<p class="fl cus_p" v-if="!item.primaryColor">颜色级
@@ -88,7 +89,8 @@ import { mapState } from 'vuex'
 		data:function(){
 			return{
 				customization:'',
-				permissionMenu: null
+				permissionMenu: null,
+				userInfo: ''
 			}
 		},
 		created() {
@@ -99,6 +101,9 @@ import { mapState } from 'vuex'
 				this.$emit('load',false)
 				
 			});
+			this.userInfo = this.userInfoM
+			if (JSON.stringify(this.userInfo) == '{}')
+			this.userInfo = JSON.parse(sessionStorage.getItem('userInfo')) ? JSON.parse(sessionStorage.getItem('userInfo')) : {}
 			if (!this.userInfo.user) {
 				this.permissionMenu = false
 			} else {
@@ -107,7 +112,7 @@ import { mapState } from 'vuex'
 		},
 		computed: mapState({
 			// 全局用户信息
-			userInfo: state => state.userInfo.userInfo
+			userInfoM: state => state.userInfo.userInfo
 		}),
 		methods:{
 			editTo(searchId_){

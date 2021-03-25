@@ -20,6 +20,7 @@ import InternalUser from '@/components/waitEnquiryChildren/InternalUser'
 		data: function() {
 			return {
         JumpComponent: '', // 1 客户 2 棉联用户
+        userInfo: '',
         loading: true
 			}
     },
@@ -29,9 +30,12 @@ import InternalUser from '@/components/waitEnquiryChildren/InternalUser'
     },
     computed: mapState({
 			// 全局用户信息
-			userInfo: state => state.userInfo.userInfo
+			userInfoM: state => state.userInfo.userInfo
 		}),
 		created() {
+      this.userInfo = this.userInfoM
+      if (JSON.stringify(this.userInfo) == '{}')
+      this.userInfo = JSON.parse(sessionStorage.getItem('userInfo')) ? JSON.parse(sessionStorage.getItem('userInfo')) : {}
       if (!this.userInfo.user) {
         this.$message({
           showClose: true,

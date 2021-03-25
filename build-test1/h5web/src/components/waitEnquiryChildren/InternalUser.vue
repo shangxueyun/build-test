@@ -1,7 +1,7 @@
 <template>
 	<div v-loading="loading">
 		<div class="topBack" >
-			<img src="../../assets/img/back_icon.png" @click="$router.back(1)" alt="">
+			<img src="~@/assets/img/back_icon.png" @click="$router.back(1)" alt="">
 			<p>待询盘</p>
 		</div>
 		<div class="addHeight"></div>
@@ -39,7 +39,9 @@
 							<div class="res_price">
 								<p class="zhishu" v-if="list.indexCode">{{list.indexCode}}<span v-if="list.basis>=0">+</span>{{list.basis}}</p>
 								<p class="weight_one"><span>{{list.pubPrice}}</span>元/吨</p>
-								<p class="weight_two">公重<span>{{list.pubWeight}}</span>吨</p>
+								<!-- <p class="weight_two">公重<span>{{list.pubWeight}}</span>吨</p> -->
+								<p class="weight_two" v-if="list.amountType!=8">公重<span>{{list.pubWeight}}</span> 吨</p>
+								<p class="weight_two" v-if="list.amountType==8">仓重<span>{{list.amount}}</span> 吨</p>
 							</div>
 							<!-- <input class="res_btn" type="button" value="加入购物车"> -->
 							<!-- <img class="shanchu" src="../../assets/img/shanchu.png" @click.stop="cartRemove(list.listingID,index,ind,list.indexCode,list.price,list.pubWeight)" alt=""> -->
@@ -49,9 +51,9 @@
 			</ul>
 		</div>
 		<div v-if="resshow" class="noRes">
-			<img src="../../assets/img/noRes.png" alt="">
+			<img src="~@/assets/img/noRes.png" alt="">
 			<p>空空如也，快去挑选资源吧！</p>
-			<!-- <router-link to="/warehouse">前往资源库>></router-link> -->
+			<router-link :to="'/warehouse'+'/'+'null'+'/'+'1'" class="button">去商城</router-link>
 		</div>
 		<div class="removeSure" v-if="remoreSure">
 			<div class="removeSure_bg"></div>
@@ -68,10 +70,9 @@
 		<div class="calculate">
 			<input id='quanxuan' class="radio_type quanxuan" type="checkbox" name="type" v-model='checked' @change='checkedAll' />
 			<label for="quanxuan">全选</label>
-			<input class="tijiao" type="button" value="提交询盘" @click="upOrder" v-show="upFlag">
-			<input class="tijiao" type="button" value="提交询盘" style="background: #ccc;" v-show="!upFlag">
+			<input class="tijiao" type="button" value="提交询盘" @click="upOrder">
 			<div class="shanchu" @click="remoreSure=true">
-				<img src="../../assets/img/shanchu_icon.png" alt="">
+				<img src="~@/assets/img/shanchu_icon.png" alt="">
 			</div>
 			<p class="zongji">总计:<span>{{cartweight.toFixed(3)}}吨</span></p>
 		</div>
@@ -95,11 +96,25 @@
 				</div>
 			</div>
 			<div class="tanchu_bg"></div>
-		</div>
+		</div> 
 		<p id="newParice" @click="parice('yes')" style="display: none;"></p>
+		<div class="anomalyDetection" v-if="anomalyDetection" v-loading="anomalyDetectionLod">
+			<div class="content">
+				<h3>重要提示</h3>
+				<span class="close" @click="anomalyDetection = false"></span>
+				<div class="info">
+					<div class="img_con">
+						<img src="~@/assets/icon/anomalyDetection.png" >
+					</div>
+					<p>系统检测到可能非客户本人登录，如继续操作可能无积分奖励。</p>
+				</div>
+				<div class="footer_bottom">
+					<div class="button Bleft" @click="anomalyDetection = false">取消提交</div>
+					<div class="button Bright" @click="anomalyDetectionSubmit">我是本人，继续提交</div>
+				</div>
+			</div>
+		</div>
 	</div>
- 
-
 </template>
 
 
@@ -108,6 +123,7 @@
 <script>
 //  客户
 // 
+import { getQueryObject } from '@/utils'
 	export default {
 		data: function() {
 			return {
@@ -121,11 +137,14 @@
 				List: '',
 				listingIds: {},
 				way: '',
-				resshow:true,
+				resshow:false,
 				select1: false,
 				radio: 0,
 				tanchuShow: false,
 				remoreSure:false,
+				anomalyDetection: false,
+				anomalyDetectionLod: false,
+				params: '',
 				upFlag:true,
 			}
 		},
@@ -251,6 +270,8 @@
 						this.checked = false
 						this.getstore(this.checkList.length)
 						this.checkList = []
+						this.cartweight = 0.00;
+						this.cartPrice = 0.00;
 					}).then(()=>{
 					   // document.getElementById('newParice').click();
 					});
@@ -385,7 +406,7 @@
 			},
 			// 下单
 			upOrder() {
-				this.upFlag=false
+				// this.upFlag=false
 				// let bechId = new Array();
 				// let params = new URLSearchParams();
 				// zongprice =zongprice+parseInt(this.List[num].getAttribute('data-price'));
@@ -429,11 +450,52 @@
 				// let listing_id = encodeURIComponent(JSON.stringify(listingIds));
 				// let deliveryMode_id = encodeURIComponent(JSON.stringify(deliveryModeIds));
 				// let needLoan_id = encodeURIComponent(JSON.stringify(needLoanIds));
-
-				this.$http.post('/wx/trade/createSpotSale?listingIDs=' + listingIds + '&indexCodes=' + indexCodes +
-					'&basisPrices=' + basisPrices + '&prices=' + prices).then((response) => {
+				let VM = this
+				if (listingIds.length > 0) {
+					this.loading = true
+					this.params = `?listingIDs=${listingIds}&indexCodes=${indexCodes}&basisPrices=${basisPrices}&prices=${prices}`
+					// 异常检测接口
+					this.$HttpRequest({
+						url: '/wx/api/is_normal',
+						method: 'post'
+					}).then(res => {
+						this.loading = false
+						if (res.data)
+						this.anomalyDetectionSubmit()
+						else
+						this.anomalyDetection = true
+					})
+				}
+				else {
+					this.$message({
+						message: '请至少选择一条数据',
+						dispatch: 1000,
+						type: 'error'
+					});
+				}
+				this.tanchuShow = false
+			},
+			getstore (type) {
+				// 获取
+				let num = this.$store.getters.OPREATING_INFO_GET('UserEnquiries')
+				// 修改
+				this.$store.commit({
+					type: 'OPREATING_INFO_SET',
+					UserEnquiries: ( num ? num : 0 ) - type
+				})
+				// 存储
+				this.$store.dispatch('CLOSE_SESSIONSTORAGE')
+			},
+			anomalyDetectionSubmit () {
+				// this.anomalyDetectionLod = true
+				this.anomalyDetection = false
+				this.loading = true
+				let Href = getQueryObject(this.params)
+				this.$http.post('/wx/spotSale/createSpotSale' + this.params).then((response) => {
 					// this.CFprice=response;
 					// console.log(response)
+					// this.anomalyDetectionLod = false
+					this.loading = false
 					if (response.success) {
 						this.$message({
 							message: '提交成功',
@@ -447,7 +509,9 @@
 								});
 							}
 						});
-						this.getstore(listingIds.length)
+						this.getstore(Href.listingIDs.split(',').length)
+						this.cartweight = 0.00;
+						this.cartPrice = 0.00;
 					} else {
 						this.upFlag=true
 						// this.$message({
@@ -471,18 +535,6 @@
 
 					}
 				});
-				this.tanchuShow = false
-			},
-			getstore (type) {
-				// 获取
-				let num = this.$store.getters.OPREATING_INFO_GET('UserEnquiries')
-				// 修改
-				this.$store.commit({
-					type: 'OPREATING_INFO_SET',
-					UserEnquiries: ( num ? num : 0 ) - type
-				})
-				// 存储
-				this.$store.dispatch('OPREATING_INFO_SET_LOA')
 			}
 		},
 		watch: {
@@ -507,6 +559,19 @@
 
 <style lang="scss">
 	.noRes a{color: #14bab4;font-size: 0.3rem;margin-top: 0.2rem;display: inline-block;}
+	.noRes{
+		.button{
+			width: 2.88rem;
+			margin-top: 1rem;
+			height: .8rem;
+			background: url('../../assets/icon/backBtn.png') no-repeat;
+			background-size: 100%;
+			border-radius: .8rem;
+			line-height: .8rem;
+			color: #fff;
+			font-size: .32rem;
+		}
+	}
 	.cart_title {
 		font-size: 0.32rem;
 		padding: 0.2rem 0.2rem 0.1rem 0.2rem;
@@ -686,7 +751,7 @@
 		.tijiao {
 			float: right;
 			width: 2.1rem;
-			background: #fd6e20;
+			background: #fd6e20 !important;
 			font-size: 0.32rem;
 			height: 100%;
 			border: 0;
@@ -804,4 +869,84 @@
 			bottom: 0;
 		}
 	}
+		.anomalyDetection{
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			padding-top: 2rem;
+			background: rgba(51, 51, 51, .4);
+			z-index: 111111;
+			.content{
+				width: 76%;
+				height: auto;
+				margin: 0 auto;
+				padding: .34rem;
+				background: #fff;
+				border-radius: .1rem;
+				position: relative;
+				h3{
+					font-size: 0.32rem;
+					padding: 0px 0px 0.2rem 0;
+					font-weight: bold;
+					border-bottom: 1px solid #EAEAEA;
+				}
+				.info{
+					width: 90%;
+					height: 3.5rem;
+					margin: 0 auto;
+					.img_con{
+						width: 2.2rem;
+						height: 2.2rem;
+						margin: 10px auto;
+						img{
+							width: 2.2rem;
+							height: 2.2rem;
+						}
+					}
+					p{
+						text-align: center;
+						color: #333333;
+					}
+				}
+				.close{
+					position: absolute;
+					top: .16rem;
+					right: .28rem;
+					width: 0.36rem;
+					height: 0.36rem;
+					border-radius: .18rem;
+					color: #777;
+					background: url('~@/assets/icon/close.png') no-repeat;
+					background-size: 100% 100%;
+					font-size: .3rem;
+					text-align: center;
+					line-height: .36rem;
+				}
+				.footer_bottom{
+					width: 100%; 
+					height: .72rem;
+					.button{
+						width: 40%;
+						height: 100%;
+						background: #DEDEDE;
+						text-align: center;
+						line-height: 0.72rem;
+						border-radius: 100px;
+					}
+					.Bleft{
+						color: #fff;
+						background: #14BAB4;
+						float: left;
+					}
+					.Bright{
+						color: #333;
+						background: #DEDEDE;
+						width: 54%;
+						float: right;
+					}
+				}
+			}
+		}
 </style>

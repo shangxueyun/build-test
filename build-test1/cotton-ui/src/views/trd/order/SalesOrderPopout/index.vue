@@ -147,7 +147,7 @@
         <el-table-column label="发货数量" align="center" header-align="center" prop="deliveryAmount">
           <template slot-scope="scope">
             <!-- newChargeAmount -->
-            <input class="numberNum" type="number" @blur="newChargeAmountBlur(scope.$index, scope.row, $event)" @input="newChargeAmount($event, scope.row)" :value="scope.row.newChargeAmount" :disabled="scope.row.orderAvailAmount <= 0?true:false" :max="scope.row.orderAvailAmount" :min="0" style="width: 100%;">
+            <input class="numberNum" disabled type="number" @blur="newChargeAmountBlur(scope.$index, scope.row, $event)" @input="newChargeAmount($event, scope.row)" :value="scope.row.newChargeAmount" :max="scope.row.orderAvailAmount" :min="0" style="width: 100%;">
           </template>
         </el-table-column>
         <el-table-column label="价格（元/吨）" align="center" header-align="center" prop="price" />
@@ -467,6 +467,7 @@ export default {
           document.body.append(aEle)
           setTimeout(() => {
             document.getElementById('HERFS').click()
+            document.getElementById('HERFS').remove()
           }, 200)
         } else {
           this.msgError(response.msg);

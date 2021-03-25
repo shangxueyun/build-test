@@ -43,7 +43,7 @@
 			</div>
 			<div class="mt">
 				<p class="p3 fl">升贴水 485.00</p>
-				<p class="p4 fr">公重<span>{{res_det.amount}}</span>吨</p>
+				<p class="p4 fr"><span v-if="res_det.amountType!=8">公重</span><span v-if="res_det.amountType==8">仓重</span><span>{{res_det.amount}}</span>吨</p>
 				<div class="clear"></div>
 			</div>
 		</div>

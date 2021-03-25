@@ -39,7 +39,9 @@
 							<div class="res_price">
 								<p class="zhishu" v-if="list.indexCode">{{list.indexCode}}<span v-if="list.basis>=0">+</span>{{list.basis}}</p>
 								<p class="weight_one"><span>{{list.pubPrice}}</span>元/吨</p>
-								<p class="weight_two">公重<span>{{list.pubWeight}}</span>吨</p>
+								<!-- <p class="weight_two">公重<span>{{list.pubWeight}}</span>吨</p> -->
+								<p class="weight_two" v-if="list.amountType!=8">公重<span>{{list.pubWeight}}</span> 吨</p>
+								<p class="weight_two" v-if="list.amountType==8">仓重<span>{{list.amount}}</span> 吨</p>
 							</div>
 							<!-- <input class="res_btn" type="button" value="加入购物车"> -->
 							<!-- <img class="shanchu" src="../../assets/img/shanchu.png" @click.stop="cartRemove(list.listingID,index,ind,list.indexCode,list.price,list.pubWeight)" alt=""> -->
@@ -51,7 +53,7 @@
 		<div v-if="resshow" class="noRes">
 			<img src="../../assets/img/noRes.png" alt="">
 			<p>空空如也，快去挑选资源吧！</p>
-			<!-- <router-link to="/warehouse">前往资源库>></router-link> -->
+			<router-link :to="'/warehouse'+'/'+'null'+'/'+'1'" class="button">去商城</router-link>
 		</div>
 		<div class="removeSure" v-if="remoreSure">
 			<div class="removeSure_bg"></div>
@@ -148,7 +150,7 @@
 				List: '',
 				listingIds: {},
 				way: '',
-				resshow:true,
+				resshow:false,
 				select1: false,
 				radio: 0,
 				tanchuShow: false,
@@ -372,6 +374,8 @@
 							let lengthS = this.List.length - this.viewListData.listingIDs.split(',').length
 							this.getstore(this.viewListData.listingIDs.split(',').length)
 							this.checkList = []
+							this.cartweight = 0.00;
+							this.cartPrice = 0.00;
 							this.$message({
 								message: '提交成功',
 								type: 'success',
@@ -445,6 +449,8 @@
 						let length = this.List.length - this.checkList.length
 						this.getstore(this.checkList.length)
 						this.checkList = []
+						this.cartweight = 0.00;
+						this.cartPrice = 0.00;
 					}).then(()=>{
 					   // document.getElementById('newParice').click();
 					});
@@ -617,7 +623,7 @@
 					UserEnquiries: ( num ? num : 0 ) - type
 				})
 				// 存储
-				this.$store.dispatch('OPREATING_INFO_SET_LOA')
+				this.$store.dispatch('CLOSE_SESSIONSTORAGE')
 			}
 		},
 		watch: {
@@ -642,6 +648,19 @@
 
 <style lang="scss">
 	.noRes a{color: #14bab4;font-size: 0.3rem;margin-top: 0.2rem;display: inline-block;}
+	.noRes{
+		.button{
+			width: 2.88rem;
+			margin-top: 1rem;
+			height: .8rem;
+			background: url('../../assets/icon/backBtn.png') no-repeat;
+			background-size: 100%;
+			border-radius: .8rem;
+			line-height: .8rem;
+			color: #fff;
+			font-size: .32rem;
+		}
+	}
 	.cart_title {
 		font-size: 0.32rem;
 		padding: 0.2rem 0.2rem 0.1rem 0.2rem;
@@ -821,7 +840,7 @@
 		.tijiao {
 			float: right;
 			width: 2.1rem;
-			background: #fd6e20;
+			background: #fd6e20 !important;
 			font-size: 0.32rem;
 			height: 100%;
 			border: 0;

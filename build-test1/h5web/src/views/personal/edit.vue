@@ -315,6 +315,12 @@ import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
 					flag: false,
 					filter: 'primaryColor',
 					value: 24
+				}, {
+					id: 14,
+					name: '无',
+					flag: false,
+					filter: 'primaryColor',
+					value: 0
 				}],
 				mhlx_items_list: [{
 					id: 1,
@@ -470,7 +476,7 @@ import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
 									// console.log(response)
 									vm.save_inx = response.entity;
 									vm.saveName = response.entity.searchName;
-                  			vm.search_list();
+                  					vm.search_list();
 								});
 							})
 						
@@ -560,6 +566,7 @@ import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
 					filter: '',
 					value: ''
 				})
+				this.search_list();
 			});
 			// 获取年份
 			this.$http.post('/wx/bases/getListingData').then((response) => {
@@ -828,7 +835,7 @@ import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
 				}
 				// 产地2
 				for(var i=0;i<this.yieldly_list.length;i++){
-					if(save_inx.originsCity){
+					if(save_inx.factoryName){
 						for(var x=0;x<save_inx.factoryName.length;x++){
 							if(this.yieldly_list[i].value==save_inx.factoryName.split(',')[x]){
 								this.yieldly_list[i].flag=true;

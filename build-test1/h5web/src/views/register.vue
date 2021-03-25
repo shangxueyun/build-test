@@ -6,7 +6,7 @@
 			<input class="phone_num" type="text" autocomplete="new-password" placeholder="请输入企业名称" v-model="inputTxt" @input="oncompany">
 			<div class="company_list" v-show="flag">
 				<ul>
-					<li v-for="item in companyList" @click="select(item.memberID,item.corpName)">{{item.corpName}}</li>
+					<li v-for="item in companyList" @click="select(item.memberID,item.corpNameFull)">{{item.corpNameFull}}</li>
 				</ul>
 			</div>
 			<div class="clear"></div>
@@ -19,7 +19,7 @@
 			</select>
 			<div class="company_list" v-show="flag">
 				<ul>
-					<li v-for="item in companyList" @click="select(item.memberID,item.corpName)">{{item.corpName}}</li>
+					<li v-for="item in companyList" @click="select(item.memberID,item.corpNameFull)">{{item.corpNameFull}}</li>
 				</ul>
 			</div>
 			<div class="clear"></div>
@@ -113,7 +113,7 @@
 				if(this.inputTxt!=''){
 					this.flag=true;
 					this.memberID='';
-					this.$http.post('/wx/bases/list/member?corpName='+this.inputTxt).then((response) => {
+					this.$http.post('/wx/bases/list/member?corpNameFull='+this.inputTxt).then((response) => {
 						// console.log(response);
 						this.companyList=response.entity
 					})
@@ -123,8 +123,8 @@
 				}
 				
 			},
-			select(memberID,corpName){
-				this.inputTxt=corpName;
+			select(memberID,corpNameFull){
+				this.inputTxt=corpNameFull;
 				this.memberID=memberID;
 				this.flag=false;
 			},

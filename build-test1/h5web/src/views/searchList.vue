@@ -5,15 +5,15 @@
 				<i class="fl">
 					<img src="../assets/img/sousuo.png" alt="">
 				</i>
-				<input class="fl search_txt" placeholder="请输入批次号" type="text" name="" id="search" v-model="inputTxt" @input="oninput" oninput="value=value.replace(/[^\d]/g,'')" autofocus max="11" maxlength="11"/>
+				<input class="fl search_txt" placeholder="请输入批次号" type="text" name="search" id="search" v-model="inputTxt" autofocus="autofocus" />
 				<div class="clear"></div>
 			</div>
-			<input class="fl search_btn" type="button" name="" id="" value="搜索" />
+			<input class="fl search_btn" type="button" name="" @click="oninput" value="搜索" />
 			<div class="clear"></div>
 		</div>
 		<div class="search_num" v-if="ishow==1">
 			<ul>
-				<li class="list_inx" v-for="item in numList" @click="godetails(item.batchID,item.listingID)">
+				<li class="list_inx" v-for="item in numList" @click="godetails(item.batchID,item.listingID)" :key="item.listingID">
 					<p class="id">{{item.batchID}}</p>
 					<p class="pihao">批号</p>
 				</li>
@@ -50,13 +50,19 @@
 			// 输入动态查询列表
 			oninput() {
 				var reg = /^[1-9]\d*$|^0$/; // 注意：故意限制了 0321 这种格式，如不需要，直接reg=/^\d+$/;
+				this.$http.post('/wx/listing/searchBatch?k='+this.inputTxt).then((response) => {
+					this.numList = response.entity;
+					this.loading=false;
+					console.log(response)
+					this.ishow=1;
+				})
 				if (reg.test(this.inputTxt) == true) {
-					this.$http.post('/wx/product/getCottonBatchList?batchID='+this.inputTxt).then((response) => {
-						this.numList = response.entity;
-						this.loading=false;
-						console.log(response)
-						this.ishow=1;
-					})
+					// this.$http.post('/wx/product/getCottonBatchList?batchID='+this.inputTxt).then((response) => {
+					// 	this.numList = response.entity;
+					// 	this.loading=false;
+					// 	console.log(response)
+					// 	this.ishow=1;
+					// })
 				} else {
 					
 					// this.$http.post('/wx/bases/getDFList?name='+this.inputTxt).then((response) => {

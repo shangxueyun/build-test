@@ -1,15 +1,15 @@
 <template>
 
 	<div class="index_wrap">
-		<Search></Search>
-		<Banner></Banner>
-		<HotNews></HotNews>
-		<IndexMenu></IndexMenu>
-		<Recommend></Recommend>
-		<DealNews></DealNews>
-		<Customization></Customization>
-		<ResourceList></ResourceList>
-		<IndexLogistics></IndexLogistics>
+		<Search :hostUlr="'index'" ref="Search" :FinputTxt="FinputTxt" @searchListData="searchListData"></Search>
+		<Banner ref="Banner"></Banner>
+		<HotNews ref="HotNews"></HotNews>
+		<IndexMenu ref="IndexMenu"></IndexMenu>
+		<Recommend ref="Recommend"></Recommend>
+		<DealNews ref="DealNews"></DealNews>
+		<Customization ref="Customization"></Customization>
+		<ResourceList ref="ResourceList" :paramsList="resList"></ResourceList>
+		<IndexLogistics ref="IndexLogistics"></IndexLogistics>
 		<div class="qrCode" v-if="qrShow">
 			<div class="qrCode_bg"></div>
 			<div class="qrCode_con">
@@ -45,6 +45,8 @@
 				openId: '',
 				code: '',
 				imgUrl:'',
+				FinputTxt: '',
+				resList: [],
 				qrShow:false,
 				qrSure:false,
 				
@@ -118,7 +120,35 @@
 				} else {
 					this.qrShow=false;
 				}
-			}
+			},
+			// 搜索列表
+			searchListData (obj, type, inputTxt) {
+				if (inputTxt == '' || type) {
+					this.$refs.Banner.$el.style.display = 'block'
+					this.$refs.HotNews.$el.style.display = 'block'
+					this.$refs.IndexMenu.$el.style.display = 'block'
+					this.$refs.Recommend.$el.style.display = 'block'
+					this.$refs.DealNews.$el.style.display = 'block'
+					this.$refs.Customization.$el.style.display = 'block'
+					this.$refs.IndexLogistics.$el.style.display = 'block'
+					this.$nextTick(() => {
+						this.$refs.ResourceList.paramsUpdate(obj, true)
+					})
+				} else {
+					this.FinputTxt = inputTxt
+					this.resList = obj
+					this.$refs.Banner.$el.style.display = 'none'
+					this.$refs.HotNews.$el.style.display = 'none'
+					this.$refs.IndexMenu.$el.style.display = 'none'
+					this.$refs.Recommend.$el.style.display = 'none'
+					this.$refs.DealNews.$el.style.display = 'none'
+					this.$refs.Customization.$el.style.display = 'none'
+					this.$refs.IndexLogistics.$el.style.display = 'none'
+					this.$nextTick(() => {
+						this.$refs.ResourceList.paramsUpdate(obj)
+					})
+				}
+			},
 		},
 	}
 </script>

@@ -1,7 +1,7 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
-      <keep-alive :include="cachedViews">
+      <keep-alive :include="cachedViews.length == 0 ? '' : cachedViews[0]">
         <router-view :key="key" />
       </keep-alive>
     </transition>
@@ -18,7 +18,12 @@ export default {
     key() {
       return this.$route.path
     }
-  }
+  },
+  watch: {
+    cachedViews(res, o) {
+      return this.$store.state.tagsView.cachedViews
+    }
+  },
 }
 </script>
 

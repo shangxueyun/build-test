@@ -4,14 +4,14 @@
 			<p class="wuliu_title">物流线路</p>
 			<div class="swiper-container logistics">
 				<div class="swiper-wrapper">
-					<div class="swiper-slide" v-for="item in logistics">
+					<div class="swiper-slide" v-for="(item,index) in logistics" :key="index">
 						
 					</div>
 					
 				</div>
 			</div>
 			<swiper class='logistics' :options="swiperOption4" v-if="logistics!=''">
-			　　<swiper-slide v-for="item in logistics">
+			　　<swiper-slide v-for="(item,index) in logistics" :key="index">
 					<div class="slide_wrap pos">
 						<p class="line_start poa">起点</p>
 						<p class="line_end poa">终点</p>

@@ -18,12 +18,12 @@
 				<div class="clear"></div>
 			</div>
 			<div class="res_con">
-				<div><span class="title">颜色级</span></br><span class="num">{{res_det.listingPrimaryColorName}}</span></div><i></i>
-				<div><span class="title">长度</span></br><span class="num">{{res_det.lengthAvg}}</span></div><i></i>
-				<div><span class="title">强力</span></br><span class="num">{{res_det.strongAvg}}</span></div><i></i>
-				<div><span class="title">马值</span></br><span class="num">{{res_det.mikeAvg}}</span></div><i></i>
-				<div><span class="title">含杂率</span></br><span class="num">{{res_det.impurity}}</span></div><i></i>
-				<div><span class="title">回潮率</span></br><span class="num">{{res_det.moisture}}</span></div>
+				<div><span class="title">颜色级</span><br><span class="num">{{res_det.listingPrimaryColorName}}</span></div><i></i>
+				<div><span class="title">长度</span><br><span class="num">{{res_det.lengthAvg}}</span></div><i></i>
+				<div><span class="title">强力</span><br><span class="num">{{res_det.strongAvg}}</span></div><i></i>
+				<div><span class="title">马值</span><br><span class="num">{{res_det.mikeAvg}}</span></div><i></i>
+				<div><span class="title">含杂率</span><br><span class="num">{{res_det.impurity}}</span></div><i></i>
+				<div><span class="title">回潮率</span><br><span class="num">{{res_det.moisture}}</span></div>
 				<div class="clear"></div>
 			</div>
 		</div>
@@ -43,7 +43,7 @@
 			</div>
 			<div class="mt">
 				<!-- <p class="p3 fl">升贴水 485.00</p> -->
-				<p class="p4 fr">公重<span>{{res_det.amount}}</span>吨</p>
+				<p class="p4 fr"><span v-if="res_det.amountType!=8">公重</span><span v-if="res_det.amountType==8">仓重</span><span>{{res_det.amount}}</span>吨</p>
 				<div class="clear"></div>
 			</div>
 		</div>
@@ -54,85 +54,101 @@
 			<table>
 				<tr>
 					<td class="bt">合计包数</td><td>{{res_det.packnum}}包</td>
-					<td class="bt">质量标识</td><td>-</td>
+					<td class="bt">质量标识</td><td>{{res_det.quality == '' ? '-' : res_det.quality}}</td>
 				</tr>
 				<tr>
-					<td class="bt">合计毛重</td><td>{{res_det.grossWeight}}包</td>
+					<td class="bt">合计毛重</td><td>{{res_det.grossWeight}}吨</td>
 					<td class="bt">平均回溯</td><td>{{res_det.moisture}}</td>
 				</tr>
 				<tr>
-					<td class="bt">合计皮重</td><td>{{res_det.tareWeight}}kg</td>
+					<td class="bt">合计皮重</td><td>{{res_det.tareWeight}}{{ res_det.tareWeight > 1 ? 'kg' : '吨' }}</td>
 					<td class="bt">平均含杂</td><td>{{res_det.impurity}}</td>
 				</tr>
 				<tr>
-					<td class="bt">合计净重</td><td>{{res_det.netWeight}}</td>
-					<td class="bt">合计公重</td><td>{{res_det.pubWeight}}</td>
+					<td class="bt">合计净重</td><td>{{res_det.netWeight}}吨</td>
+					<td class="bt">合计公重</td><td>{{res_det.pubWeight}}吨</td>
 				</tr>
 			</table>
 			<p class="tab_bt">主体颜色级：{{res_det.primaryColorName}}</p>
 			<table>
 				<tr>
-					<td class="bt">白棉1级</td><td>{{res_det.colorBM01}}</td>
-					<td class="bt">白棉2级</td><td>{{res_det.colorBM02}}</td>
+					<td class="bt">白棉1级</td><td>{{res_det.colorBM01 == 0 ? '-' : `${res_det.colorBM01}%`}}</td>
+					<td class="bt">白棉2级</td><td>{{res_det.colorBM02 == 0 ? '-' : `${res_det.colorBM02}%`}}</td>
 				</tr>
 				<tr>
-					<td class="bt">白棉3级</td><td>{{res_det.colorBM03}}</td>
-					<td class="bt">白棉4级</td><td>{{res_det.colorBM04}}</td>
+					<td class="bt">白棉3级</td><td>{{res_det.colorBM03 == 0 ? '-' : `${res_det.colorBM03}%`}}</td>
+					<td class="bt">白棉4级</td><td>{{res_det.colorBM04 == 0 ? '-' : `${res_det.colorBM04}%`}}</td>
 				</tr>
 				<tr>
-					<td class="bt">白棉5级</td><td>{{res_det.colorBM05}}</td>
-					<td class="bt"></td><td></td>
+					<td class="bt">白棉5级</td><td>{{res_det.colorBM05 == 0 ? '-' : `${res_det.colorBM05}%`}}</td>
+					<td class="bt">淡点污棉1级</td><td></td>
+				</tr>
+				<tr>
+					<td class="bt">淡点污棉1级</td><td>{{res_det.colorDD01 == 0 ? '-' : `${res_det.colorDD01}%`}}</td>
+					<td class="bt">淡点污棉2级</td><td>{{res_det.colorDD02 == 0 ? '-' : `${res_det.colorDD02}%`}}</td>
+				</tr>
+				<tr>
+					<td class="bt">淡点污棉3级</td><td>{{res_det.colorDD03 == 0 ? '-' : `${res_det.colorDD03}%`}}</td>
+					<td class="bt">淡黄染棉1级</td><td>{{res_det.colorDH01 == 0 ? '-' : `${res_det.colorDH01}%`}}</td>
+				</tr>
+				<tr>
+					<td class="bt">淡黄染棉2级</td><td>{{res_det.colorDH02 == 0 ? '-' : `${res_det.colorDH02}%`}}</td>
+					<td class="bt">淡黄染棉3级</td><td>{{res_det.colorDH03 == 0 ? '-' : `${res_det.colorDH03}%`}}</td>
+				</tr>
+				<tr>
+					<td class="bt">黄染棉1级</td><td>{{res_det.colorHR01 == 0 ? '-' : `${res_det.colorHR01}%`}}</td>
+					<td class="bt">黄染棉2级</td><td>{{res_det.colorHR02 == 0 ? '-' : `${res_det.colorHR02}%`}}</td>
 				</tr>
 			</table>
-			<p class="tab_bt">主体长度级：{{res_det.primaryLength}}</p>
+			<p class="tab_bt">主体长度级：{{res_det.primaryLength}}&nbsp;&nbsp;&nbsp;&nbsp;平均长度：{{res_det.lengthAvg}}</p>
 			<table v-if="res_det.cottonType!=4">
 				<tr>
-					<td class="bt">25mm</td><td>{{res_det.length25 > 0 ? res_det.length25 :'-'}}</td>
-					<td class="bt">26mm</td><td>{{res_det.length26 > 0 ? res_det.length26 :'-'}}</td>
+					<td class="bt">25mm</td><td>{{res_det.length25 > 0 ? `${res_det.length25}%` :'-'}}</td>
+					<td class="bt">26mm</td><td>{{res_det.length26 > 0 ? `${res_det.length26}%` :'-'}}</td>
 				</tr>
 				<tr>
-					<td class="bt">27mm</td><td>{{res_det.length27 > 0 ? res_det.length27 :'-'}}</td>
-					<td class="bt">28mm</td><td>{{res_det.length28 > 0 ? res_det.length28 :'-'}}</td>
+					<td class="bt">27mm</td><td>{{res_det.length27 > 0 ? `${res_det.length27}%` :'-'}}</td>
+					<td class="bt">28mm</td><td>{{res_det.length28 > 0 ? `${res_det.length28}%` :'-'}}</td>
 				</tr>
 				<tr>
-					<td class="bt">29mm</td><td>{{res_det.length29 > 0 ? res_det.length29 :'-'}}</td>
-					<td class="bt">30mm</td><td>{{res_det.length30 > 0 ? res_det.length30 :'-'}}</td>
+					<td class="bt">29mm</td><td>{{res_det.length29 > 0 ? `${res_det.length29}%` :'-'}}</td>
+					<td class="bt">30mm</td><td>{{res_det.length30 > 0 ? `${res_det.length30}%` :'-'}}</td>
 				</tr>
 				<tr>
-					<td class="bt">31mm</td><td>{{res_det.length31 > 0 ? res_det.length31 :'-'}}</td>
-					<td class="bt">32mm</td><td>{{res_det.length32 > 0 ? res_det.length32 :'-'}}</td>
+					<td class="bt">31mm</td><td>{{res_det.length31 > 0 ? `${res_det.length31}%` :'-'}}</td>
+					<td class="bt">32mm</td><td>{{res_det.length32 > 0 ? `${res_det.length32}%` :'-'}}</td>
 				</tr>
 			</table>
 			<table v-if="res_det.cottonType==4">
 				<tr>
-					<td class="bt">33mm</td><td>{{res_det.length25 > 0 ? res_det.length25 :'-'}}</td>
-					<td class="bt">34mm</td><td>{{res_det.length26 > 0 ? res_det.length26 :'-'}}</td>
+					<td class="bt">33mm</td><td>{{res_det.length25 > 0 ? `${res_det.length25}%` :'-'}}</td>
+					<td class="bt">34mm</td><td>{{res_det.length26 > 0 ? `${res_det.length26}%` :'-'}}</td>
 				</tr>
 				<tr>
-					<td class="bt">35mm</td><td>{{res_det.length27 > 0 ? res_det.length27 :'-'}}</td>
-					<td class="bt">36mm</td><td>{{res_det.length28 > 0 ? res_det.length28 :'-'}}</td>
+					<td class="bt">35mm</td><td>{{res_det.length27 > 0 ? `${res_det.length27}%` :'-'}}</td>
+					<td class="bt">36mm</td><td>{{res_det.length28 > 0 ? `${res_det.length28}%` :'-'}}</td>
 				</tr>
 				<tr>
-					<td class="bt">37mm</td><td>{{res_det.length29 > 0 ? res_det.length29 :'-'}}</td>
-					<td class="bt">38mm</td><td>{{res_det.length30 > 0 ? res_det.length30 :'-'}}</td>
+					<td class="bt">37mm</td><td>{{res_det.length29 > 0 ? `${res_det.length29}%` :'-'}}</td>
+					<td class="bt">38mm</td><td>{{res_det.length30 > 0 ? `${res_det.length30}%` :'-'}}</td>
 				</tr>
 				<tr>
-					<td class="bt">39mm</td><td>{{res_det.length31 > 0 ? res_det.length31 :'-'}}</td>
-					<td class="bt">40mm</td><td>{{res_det.length32 > 0 ? res_det.length32 :'-'}}</td>
+					<td class="bt">39mm</td><td>{{res_det.length31 > 0 ? `${res_det.length31}%` :'-'}}</td>
+					<td class="bt">40mm</td><td>{{res_det.length32 > 0 ? `${res_det.length32}%` :'-'}}</td>
 				</tr>
 			</table>
-			<p class="tab_bt">马克隆主体级：{{res_det.primaryMike}}</p>
+			<p class="tab_bt">马克隆主体级：{{res_det.primaryMike}}&nbsp;&nbsp;&nbsp;&nbsp;平均马值：{{res_det.mikeAvg}}</p>
 			<table>
 				<tr>
-					<td class="bt">C1</td><td>{{res_det.mikeC1}}</td>
-					<td class="bt">B1</td><td>{{res_det.mikeB1}}</td>
+					<td class="bt">C1</td><td>{{res_det.mikeC1 > 0 ? `${res_det.mikeC1}%` :'-'}}</td>
+					<td class="bt">B1</td><td>{{res_det.mikeB1 > 0 ? `${res_det.mikeB1}%` :'-'}}</td>
 				</tr>
 				<tr>
-					<td class="bt">A</td><td>{{res_det.mikeA}}</td>
-					<td class="bt">B2</td><td>{{res_det.mikeB2}}</td>
+					<td class="bt">A</td><td>{{res_det.mikeA > 0 ? `${res_det.mikeA}%` :'-'}}</td>
+					<td class="bt">B2</td><td>{{res_det.mikeB2 > 0 ? `${res_det.mikeB2}%` :'-'}}</td>
 				</tr>
 				<tr>
-					<td class="bt">C2</td><td>{{res_det.mikeC2}}</td>
+					<td class="bt">C2</td><td>{{res_det.mikeC2 > 0 ? `${res_det.mikeC2}%` :'-'}}</td>
 					<td class="bt"></td><td></td>
 				</tr>
 			</table>
@@ -158,6 +174,20 @@
 					<td class="bt"></td><td></td>
 				</tr>
 			</table>
+			<p class="tab_bt">Rd%</p>
+			<table>
+				<tr>
+					<td class="bt">平均值</td><td>{{res_det.rdAvg}}</td>
+					<td class="bt"></td><td></td>
+				</tr>
+			</table>
+			<p class="tab_bt">+b</p>
+			<table>
+				<tr>
+					<td class="bt">平均值</td><td>{{res_det.plusbAvg}}</td>
+					<td class="bt"></td><td></td>
+				</tr>
+			</table>
 		</div>
 		<div class="join_cart" v-if="btnShow">
 			<!-- <input type="button" value="添加询盘" @click="joinCart(res_det.listingID)"> -->
@@ -165,11 +195,18 @@
 			<input class="res_btn" v-if="res_det.cartID!=0&&res_det.cartID!=null&&res_det.status == 0" type="button" value="删除询盘" style="background: #14bab4;" @click.stop="removeCart(res_det.listingID,res_det);">
 			<input class="res_btn" v-if="res_det.status != 0" type="button" value="添加询盘" style="background: #ccc;" @click.stop="">
 		</div>
+
+		<!--  -->
+		<router-link to="/personal/waitEnquiry" class="shopStatus">
+			<i v-if="UserEnquiries <= 20" :UserEnquiries="UserEnquiries">{{ UserEnquiries }}</i>
+			<i v-else :UserEnquiries="UserEnquiries" style="width:.4rem;height:.4rem;line-height: .36rem;font-size: 0.20rem;">20+</i>
+		</router-link>
 	</div>
 
 </template>
 
 <script>
+import { mapState } from 'vuex'
 	export default {
 		data: function() {
 			return {
@@ -182,7 +219,11 @@
 		},
 		updated() {
 		        window.scroll(0, 0);
-		 },
+		},
+		computed: mapState({
+			// 待询盘数量
+			UserEnquiries: state => state.operatingInfo.operatingInfo.UserEnquiries ? state.operatingInfo.operatingInfo.UserEnquiries : 0,
+		}),
 		methods:{
 			// 加入购物车
 			joinCart(id,item_){
@@ -257,7 +298,7 @@
 					UserEnquiries: ( num ? num : 0 ) + type
 				})
 				// 存储
-				this.$store.dispatch('OPREATING_INFO_SET_LOA')
+				this.$store.dispatch('CLOSE_SESSIONSTORAGE')
 			}
 		},
 		//获取资订单详情
@@ -277,7 +318,21 @@
 				  vm.batchID=batchID;
 				  
 		          vm.axios.post('/wx/product/getCottonBatch?batchID='+vm.batchID +"&listingID="+listingID).then((response)=>{
-		            // vm.songlikelist = res.data.data;
+					// vm.songlikelist = res.data.data;
+					// 皮重保留3位小数
+					response.entity.tareWeight = response.entity.tareWeight.toFixed(3)
+					// 长度值保留一位小数
+					response.entity.neatMin = response.entity.neatMin.toFixed(1)
+					response.entity.neatMax = response.entity.neatMax.toFixed(1)
+					response.entity.neatAvg = response.entity.neatAvg.toFixed(1)
+					// 断裂比强度保留一位小数
+					response.entity.strongMin = response.entity.strongMin.toFixed(1)
+					response.entity.strongMax = response.entity.strongMax.toFixed(1)
+					response.entity.strongAvg = response.entity.strongAvg.toFixed(1)
+					// Rd保留一位小数
+					response.entity.rdAvg = response.entity.rdAvg.toFixed(1)
+					// +b保留一位小数
+					response.entity.plusbAvg = response.entity.plusbAvg.toFixed(1)
 					vm.res_det=response.entity;
 					vm.imgSrc='https://mob.unioncotton.com/wx/product/printPng?batchID='+vm.batchID
 					vm.loading=false;
@@ -481,6 +536,29 @@
 					color: #14bab4;
 					float: right;
 				}
+			}
+		}
+		.shopStatus{
+			position: fixed;
+			right: .2rem;
+			bottom: 2.5rem;
+			width: 40px;
+			height: 40px;
+			background: url('../../assets/icon/shows.png') no-repeat;
+			background-size: 100%;
+			z-index: 1111;
+			i{
+				position: absolute;
+				right: 0px;
+				top: 0px;
+				width: .36rem;
+				height: .36rem;
+				background: red;
+				border-radius: 18px;
+				color: #fff;
+				font-size: .24rem;
+				line-height: .32rem;
+				text-align: center;
 			}
 		}
 	}

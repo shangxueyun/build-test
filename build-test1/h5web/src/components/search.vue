@@ -1,5 +1,17 @@
 <template>
-	<router-link to='/searchList' class="search">
+<div>
+	<div class="search" v-if="hostUlr">
+		<div class="search_left fl">
+			<i class="fl">
+				<img src="../assets/img/sousuo.png" alt="">
+			</i>
+			<input class="fl search_txt" placeholder="请输入批次号" type="text" name="search" id="search" v-model="inputTxt" @input="keyInput()" autofocus="autofocus" />
+			<div class="clear"></div>
+		</div>
+		<input class="fl search_btn" type="button" name="" @click="oninput" value="搜索" />
+		<div class="clear"></div>
+	</div>
+	<router-link v-else to='/searchList' class="search">
 		<div class="search_left fl">
 			<i class="fl">
 				<img src="../assets/icon/sousuo.png" alt="">
@@ -10,6 +22,7 @@
 		<input class="fl search_btn" type="button" name="" id="" value="搜索" />
 		<div class="clear"></div>
 	</router-link>
+</div>
 </template>
 
 <script>
@@ -17,13 +30,45 @@
 		data:function () {
 			return{
 				name: 'Search',
-				props: {
-					titk: 666
-				}
+				inputTxt: this.FinputTxt ? thisd.FinputTxt : ''
 			}
 		},
-		
-		
+		props:{
+			hostUlr: [String, Object, Array], // 判断依据
+			FinputTxt: [String, Object, Array]
+		},
+		methods: {
+			// 输入动态查询列表
+			updateValue (value) {
+				this.inputTxt = value
+			},
+			oninput() {
+				var reg = /^[1-9]\d*$|^0$/; // 注意：故意限制了 0321 这种格式，如不需要，直接reg=/^\d+$/;
+				this.$http.post('/wx/listing/searchBatch?k='+this.inputTxt).then((response) => {
+					this.$emit('searchListData', response.entity, false, this.inputTxt)
+				})
+				if (reg.test(this.inputTxt) == true) {
+					// this.$http.post('/wx/product/getCottonBatchList?batchID='+this.inputTxt).then((response) => {
+					// 	this.numList = response.entity;
+					// 	this.loading=false;
+					// 	console.log(response)
+					// 	this.ishow=1;
+					// })
+				} else {
+					
+					// this.$http.post('/wx/bases/getDFList?name='+this.inputTxt).then((response) => {
+					// 	this.strList = response.list;
+					// 	this.loading=false;
+					// 	// console.log(response)
+					// 	this.ishow=2;
+					// })
+				}
+			},
+			keyInput(){
+				if (!this.inputTxt)
+				this.$emit('searchListData', {}, true)
+			}
+		}
 	}
 </script>
 

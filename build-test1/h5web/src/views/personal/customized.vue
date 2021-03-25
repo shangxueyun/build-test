@@ -19,14 +19,14 @@
 					<p class="save_title">存放地:</p>
 					<!-- 城市父级循环不在点击范围 -->
 					<template v-if="address_list.length">
-						<place-of-origin :paramsSidings="paramsSidings" v-model="address_list" :type-num="3" @addparamsCall="addparamsCallplace"></place-of-origin>
+						<place-of-origin ref="placeOfOrigin" :paramsSidings="paramsSidings" :ResetFig="ResetFig" v-model="address_list" :type-num="3" @addparamsCall="addparamsCallplace"></place-of-origin>
 					</template>
 				</div>
 				<div>
 					<p class="save_title" style="margin-left: .18rem;">产地:</p>
 					<!-- 城市父级循环不在点击范围 -->
 					<template v-if="yieldly_list.length">
-					<place-of-origin ref="placeOfOrigin" v-model="yieldly_list" :type-num="6" @addparamsCall="addparamsCallplace"></place-of-origin>
+					<place-of-origin ref="placeOfOrigin1" v-model="yieldly_list" :ResetFig="ResetFig" :type-num="6" @addparamsCall="addparamsCallplace"></place-of-origin>
 					</template>
 				</div>
 			
@@ -139,6 +139,7 @@ import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
 				optActive: '',
 				warehouseList: '',
 				paramsSidings: null,
+				ResetFig: 0,
 				loading: true,
 				ifAsc: true,
 				asc: 'desc',
@@ -258,6 +259,12 @@ import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
 					flag: false,
 					filter: 'primaryColor',
 					value: 24
+				}, {
+					id: 14,
+					name: '无',
+					flag: false,
+					filter: 'primaryColor',
+					value: 0
 				}],
 				mhlx_items_list: [{
 					id: 1,
@@ -683,6 +690,13 @@ import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
 						i.flag = false;
 					}
 				});
+				this.yieldly_list.forEach(function(i,index) {
+					if(index==0){
+						i.flag = true;
+					}else{
+						i.flag = false;
+					}
+				});
 				this.lx_items_list.forEach(function(i,index) {
 					if(index==0){
 						i.flag = true;
@@ -697,6 +711,22 @@ import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
 						i.flag = false;
 					}
 				});
+				this.mhlx_items_list.forEach(function(i,index){
+					i.flag = false;
+				});
+				this.paramsSidings = 0
+				this.$nextTick(() => {
+					this.$refs.placeOfOrigin.updateParamsSidings(0)
+					this.$refs.placeOfOrigin.ResetFuc(1)
+					this.$refs.placeOfOrigin1.ResetFuc(1)
+				})
+				this.ResetFig = 1
+				this.isSee1 = false;
+				this.isSee2 = false;
+				this.isSee3 = false;
+				this.isSee4 = false;
+				this.isSee5 = false;
+				this.isSee6 = false;
 				document.getElementById("wancheng").click('show');
 			},
 			//上拉加载

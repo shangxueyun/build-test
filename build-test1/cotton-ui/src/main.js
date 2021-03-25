@@ -18,6 +18,7 @@ import './assets/icons' // icon
 import './permission' // permission control
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
+import request from '@/utils/request'
 // import ruoyiObjectFunc from ;
 import Pagination from "@/components/Pagination";
 
@@ -25,6 +26,7 @@ let ruoyiObjectFunc = require("@/utils/ruoyi")
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
+Vue.prototype.$http = request
 for (let i in ruoyiObjectFunc) {
   Vue.prototype[i] = ruoyiObjectFunc[i]
 }

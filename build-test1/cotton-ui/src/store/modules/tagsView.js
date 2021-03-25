@@ -13,9 +13,10 @@ const mutations = {
     )
   },
   ADD_CACHED_VIEW: (state, view) => {
-    if (state.cachedViews.includes(view.name)) return
-    if (!view.meta.noCache) {
-      state.cachedViews.push(view.name)
+    if (view.name == 'AddEdit') {
+      state.cachedViews = ['AddEdit']
+    } else {
+      state.cachedViews = []
     }
   },
 
@@ -38,6 +39,7 @@ const mutations = {
     })
   },
   DEL_OTHERS_CACHED_VIEWS: (state, view) => {
+    return;
     if (index > -1) {
       state.cachedViews = state.cachedViews.slice(index, index + 1)
     } else {

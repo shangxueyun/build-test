@@ -30,7 +30,7 @@
           <span style="margin: 0;background: transparent;color: #fff;">全选</span>
         </div>
         <template v-for="(item,index) in listObj">
-          <li v-if="item.parentId == 1" :key="index" :class="{'active':item.flag}" @click="addparamsList(item.filter,item.value,index)">{{item.name}}</li>
+          <li v-if="item.parentId == 1" :key="index" :class="{'active':item.flag}" @click="addparamsList(item.filter,item.value,index,1)">{{item.name}}</li>
         </template>
       </nav>
     </div>
@@ -41,7 +41,7 @@
           <span style="margin: 0;background: transparent;color: #fff;">全选</span>
         </div>
         <template v-for="(item,index) in listObj">
-          <li v-if="item.parentId == 2" :key="index" :class="{'active':item.flag}" @click="addparamsList(item.filter,item.value,index)">{{item.name}}</li>
+          <li v-if="item.parentId == 2" :key="index" :class="{'active':item.flag}" @click="addparamsList(item.filter,item.value,index,2)">{{item.name}}</li>
         </template>
       </nav>
     </div>
@@ -52,7 +52,7 @@
           <span style="margin: 0;background: transparent;color: #fff;">全选</span>
         </div>
         <template v-for="(item,index) in listObj">
-          <li v-if="item.parentId == 3" :key="index" :class="{'active':item.flag}" @click="addparamsList(item.filter,item.value,index)">{{item.name}}</li>
+          <li v-if="item.parentId == 3" :key="index" :class="{'active':item.flag}" @click="addparamsList(item.filter,item.value,index,3)">{{item.name}}</li>
         </template>
       </nav>
     </div>
@@ -63,7 +63,7 @@
           <span style="margin: 0;background: transparent;color: #fff;">全选</span>
         </div>
         <template v-for="(item,index) in listObj">
-          <li v-if="item.parentId == 4" :key="index" :class="{'active':item.flag}" @click="addparamsList(item.filter,item.value,index)">{{item.name}}</li>
+          <li v-if="item.parentId == 4" :key="index" :class="{'active':item.flag}" @click="addparamsList(item.filter,item.value,index,4)">{{item.name}}</li>
         </template>
       </nav>
     </div>
@@ -99,6 +99,7 @@ export default {
   props:{
     value: [String, Object, Array],
     listId: [String, Number],
+    ResetFig: [String, Number],
     typeNum: [String, Number],
     paramsSidings: [String, Number],
     // addparamsCall: { // 回调数据方法
@@ -113,11 +114,22 @@ export default {
     this.paramsSidings == 1 ? this.ActionClass1Checkbox = true : this.ActionClass1Checkbox = false
   },
   methods: {
+      // 铁路
       updateParamsSidings (value) {
         if (value)
         this.ActionClass1Checkbox = true
         else
         this.ActionClass1Checkbox = false
+      },
+      // 重置回调
+      ResetFuc (value) {
+        if (value) {
+          this.$refs.originsCityDepositaryChecked1.checked = false
+          this.$refs.originsCityDepositaryChecked2.checked = false
+          this.$refs.originsCityDepositaryChecked3.checked = false
+          if (this.$refs.originsCityDepositaryChecked4)
+          this.$refs.originsCityDepositaryChecked4.checked = false
+        }
       },
       // 全选
       originsCityDepositary (ele, filter, parentId) {
@@ -204,9 +216,19 @@ export default {
         else
         ele.target.className = 'active'
       },
-      addparamsList (filter, value, index) {
+      addparamsList (filter, value, index,judge) {
+		if(judge==1)
+		  this.$refs.originsCityDepositaryChecked1.checked = false
+		else if(judge==2)
+			this.$refs.originsCityDepositaryChecked2.checked = false
+		else if(judge==3)
+			this.$refs.originsCityDepositaryChecked3.checked = false
+		else if(judge==4)
+			this.$refs.originsCityDepositaryChecked4.checked = false
+        if (this.listObj[index].flag)
+        this.listObj[index].flag = false
+        else
         this.listObj[index].flag = true
-        this.$set(this.listObj)
         this.$emit('addparamsCall', filter, value, index, this.typeNum)
       }
   }

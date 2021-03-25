@@ -20,23 +20,22 @@ import InternalUser from '@/components/enquiryChildren/InternalUser'
 		data: function() {
 			return {
         JumpComponent: '', // 1 客户 2 棉联用户
-        RouteStatus: null
+        RouteStatus: null,
+        userInfo: ''
 			}
     },
     components: {
       ExternalUser,
       InternalUser
     },
-    computed: {
-      // 全局用户信息
-      userInfo: {
-        get() {
-          return this.$store.state.userInfo.userInfo
-        },
-        set(val) {}
-      }
-		},
+		computed: mapState({
+			// 全局用户信息
+			userInfoM: state => state.userInfo.userInfo
+		}),
 		created() {
+      this.userInfo = this.userInfoM
+      if (JSON.stringify(this.userInfo) == '{}')
+      this.userInfo = JSON.parse(sessionStorage.getItem('userInfo')) ? JSON.parse(sessionStorage.getItem('userInfo')) : {}
       if (!this.userInfo.user) {
         this.$message({
           showClose: true,

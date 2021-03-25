@@ -1,3 +1,4 @@
+let JSONPath = require('JSONPath');
 /**
  * 表格时间格式化
  */
@@ -306,6 +307,19 @@ export function addClass(ele, cls) {
 
 /**
  * Remove class from element
+ * @param {form} 数据对象
+ */
+export function turnFromdata(form) {
+  let params = new URLSearchParams();
+  for(let i in form) {
+    if (form.hasOwnProperty(i))
+    params.append(i, form[i])
+  }
+  return params
+}
+
+/**
+ * Remove class from element
  * @param {HTMLElement} elm
  * @param {string} cls
  */
@@ -383,4 +397,137 @@ export function camelCase(str) {
 export function isNumberStr(str) {
   return /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g.test(str)
 }
- 
+/**
+ *  数组多维不就规则递归 ArrayRecursion
+ * @param {arr} 数组递归
+ * @param {obj} 条件对象
+ * @param {child} 子集判断依据
+ * @param {func} 回调函数
+ */
+export function ArrayRecursion(arr, obj) {
+  return JSON.stringify(arr,
+    (key, value) => (Array.isArray(value) && value.map(v => {
+      var newobj = {};
+      for(let i in obj){
+        if (obj[i] == 'code') {
+          let str = ''
+          for(let o in obj){
+            str += `${v[obj[o]]},`
+          }
+          str = str.split(',')
+          str.pop()
+          newobj[i] = str.toString()
+        }
+        else
+        newobj[i] = v[obj[i]]
+      }
+      v = Object.assign(v, newobj)
+    }),value),arr)
+}
+
+/**
+ *  数组多维不就规则递归 ArrayRecursion
+ * @param {value} 匹配的值
+ * @param {arr} 数据
+ * @param {name} 判断对象字段名可以为逗号多字段 注意匹配的值固定是name[0]
+ * @param {child} 判断对象子集字段名
+ * @param {func} 回调函数
+ * @param {historyArr} 暂存数据
+ */
+export function upArrayRecursion(value, arr, name, child, func, historyArr) {
+  if (!historyArr)
+  var historyArr = []
+  for(var i = 0; i < arr.length; i++) {
+    var itemArr = historyArr.concat()
+    if (typeof name === 'object') {
+      var str = ''
+      name.forEach((v, key) => {
+        if (key != (name.length -1))
+        str += `${arr[i][v]},`
+        else
+        str += `${arr[i][v]}`
+      })
+      itemArr.push(str)
+
+      if (value == arr[i][name[0]]) {
+        return itemArr
+      }
+    }
+    else {
+      itemArr.push(arr[i][name])
+      if (value == arr[i][name]) {
+        return itemArr
+      }
+    }
+    if (arr[i][child]) {
+      var returnFlg = func(value, arr[i][child], name, child, func, itemArr)
+      if (returnFlg)
+      return returnFlg
+    }
+  }
+  // if(path === undefined) {
+  //   path = [];
+  // }
+  // for(var i = 0; i < nodes.length; i++) {
+  //     var tmpPath = path.concat();
+  //     tmpPath.push(nodes[i].code);
+  //     if(leafId == nodes[i].code) {
+  //        return tmpPath;
+  //     }
+  //     if(nodes[i].children) {
+  //       var findResult = func(leafId, nodes[i].children, func, tmpPath);
+  //       if(findResult) {
+  //         return findResult;
+  //       }
+  //     }
+  // }
+}
+
+/**
+ * 商品名称
+ * @param {obj} //json对象
+ * @param {reg} 规则
+ */
+export function getExecStrs(str) {
+  var reg = /\{\{(.+?)\}\}/g
+  var list = []
+  var result = null
+  do {
+      result = reg.exec(str)
+      result && list.push(result[1])
+  } while (result)
+  return list
+}
+
+/**
+ * 商品名称
+ * @param {obj} //json对象
+ * @param {reg} 规则
+ */
+export function productNameRuleReg(obj, reg) {
+  let regArr = getExecStrs(reg),str = reg
+  if (regArr.length) {
+    // 进行数组对象封装
+    for (let i = 0; i < regArr.length; i++) {
+      regArr[i] = {
+        value: regArr[i],
+        lable: JSONPath('', regArr[i], obj)[0] ? JSONPath('', regArr[i], obj)[0] : ''
+      }
+    }
+    // regArr对象数组创建新数组
+    let newArr = []
+    regArr.forEach((v) => {
+      let objtmp = {}
+      objtmp["{{" + v.value + "}}"] = v.lable
+      newArr.push(objtmp)
+    })
+    newArr.forEach((v) => {
+      for(let o in v) {
+        str = str.replace(o, v[o])
+      }
+    })
+    return str
+  }
+  else
+  return ''
+}

@@ -7,10 +7,44 @@
 				</div>
 				<img class="vip" src="../../assets/img/vip.png" alt="">
 			</div>
-			<p class="name">{{user.userName}}</p>
-			<p class="company">{{member.corpName}}</p>
+			<div class="info" >
+				<p class="name">{{user.userName}}</p>
+				<p class="company">{{member.corpName}}</p>
+			</div>
+			<div class="pointsMall">
+				<div class="head_top">
+					<nav>
+						<!-- <li class="xian">
+							<p>全部积分</p>
+							<p class="weight">{{ 
+								integralInfo.inactiveIntegral + 
+								integralInfo.activatedIntegral + 
+								integralInfo.todoIntegral +
+								integralInfo.convertibleIntegral +
+								integralInfo.applyingIntegral +
+								integralInfo.usedIntegral 
+								}}</p>
+						</li> -->
+						<li class="xian">
+							<p>未激活</p>
+							<p class="weight">{{ integralInfo.inactiveIntegral }}</p>
+						</li>
+						<li class="xian">
+							<p>已激活</p>
+							<p class="weight">{{ integralInfo.activatedIntegral }}</p>
+						</li>
+						<li>
+							<p>可兑换</p>
+							<p class="weight">{{ integralInfo.convertibleIntegral }}</p>
+						</li>
+					</nav>
+				</div>
+			</div>
+			<div class="pointsMall_button">
+				<router-link to="/pointsMall">我的积分</router-link>
+			</div>
 		</div>
-		<div class="auth">
+		<!-- <div v-if="geren" class="auth">
 			<a class="geren" v-if="geren" href="javascript:;" @click="applyUserCert()">
 				<p class="fl p1">实名认证</p>
 				<p class="fl p2">个人认证、企业认证、在线签约</p>
@@ -23,7 +57,7 @@
 				<p class="fr p3">立即认证</p>
 				<div class="clear"></div>
 			</a>
-		</div>
+		</div> -->
 		<div class="personal_bot">
 			<p class="personal_bt" v-if="permissionMenu.WAIT_ENQUIRY || permissionMenu.BUY_ENQUIRY || permissionMenu.PURCHASE || permissionMenu.SEARCH_HISTORY">我是买方</p>
 			<div class="per_linkT">
@@ -65,7 +99,7 @@
 				</router-link> -->
 				<router-link v-if="permissionMenu.SELL_ENQUIRY" to="/personal/enquiry/0">
 					<img src="../../assets/img/kehuxunpan@2x.png" alt="">
-					<p>线上交易<span v-if="!permissionMenu.SELL_ENQUIRY_ADMIN">({{orderNum.orderSpotSaleCount}})</span></p>
+					<p>线上交易<span v-if="!permissionMenu.SELL_ENQUIRY_PLATFORM">({{orderNum.orderSpotSaleCount}})</span></p>
 				</router-link>
 				<!-- <router-link to="/personal/myOrderBuy/0" :class="{'mt7':memberID!=10000}">
 					<img src="../../assets/img/daiqueren@2x.png" alt="">
@@ -101,6 +135,7 @@ import { mapState,  } from 'vuex'
 			return {
 				member: '',
 				memberID: '',
+				userInfo: '',
 				user: '',
 				myOrderNum: '',
 				loading: false,
@@ -111,12 +146,13 @@ import { mapState,  } from 'vuex'
 				geren:false,
 				qiye:false,
 				orderNum:'',
+				integralInfo: {},
 				// 现有部分权限设置
 				permissionMenu: {
 					WAIT_ENQUIRY: false, // 待询盘
 					BUY_ENQUIRY: false, // 采购询盘
 					SELL_ENQUIRY: false, // 线上交易
-					SELL_ENQUIRY_ADMIN: false, // 子功能
+					SELL_ENQUIRY_PLATFORM: false, // 子功能
 					PURCHASE: false, // 采购订单
 					SEARCH_HISTORY: false, // 我的需求定制
 					LISTING: false, // 我的报价
@@ -127,49 +163,60 @@ import { mapState,  } from 'vuex'
 		},
     	computed: mapState({
 			// 全局用户信息
-			userInfo: state => state.userInfo.userInfo
+			userInfoM: state => state.userInfo.userInfo
 		}),
 		created() {
-      this.loading = true
+			this.loading = true
 			window.scroll(0, 0)
-			// 获取进口棉数量
-			this.$http.post('/wx/listing/statusStat?memberID=' + this.memberID).then((response) => {
-				console.log(response);
-				this.inpNum = response.data;
-			});
-			this.$http.post('/wx/spotSale/getSpotSaleCount').then((response) => {
-				// console.log(response);
-				this.orderNum=response.entity;
-      });
+			this.userInfo = this.userInfoM
+			if (JSON.stringify(this.userInfo) == '{}')
+			this.userInfo = JSON.parse(sessionStorage.getItem('userInfo')) ? JSON.parse(sessionStorage.getItem('userInfo')) : {}
 			// 用户信息
-	    if (!this.userInfo.user) {
-        this.$message({
-          showClose: true,
-          message: this.userInfo.message,
-          type: 'error',
-          onClose: () => {
-            this.loading = false
-            this.$router.push({
-              path: '/login'
-            })
-          }
-        });
-      } else {
-        this.user = this.userInfo.user
-        this.member = this.userInfo.member
-        this.memberID = this.userInfo.member.memberID
-        // 用户权限控制
-        let permissionMenu = this.userInfo.permissionMenu
-        Object.keys(this.permissionMenu).forEach((o, i)=>{
-          for(let k of permissionMenu) {
-            if (k.includes(o))
-			this.permissionMenu[o] = true
-			if (k.includes('SELL_ENQUIRY_PLATFORM'))
-			this.permissionMenu['SELL_ENQUIRY_ADMIN'] = true
-          }
-        })
-        this.loading = false
-      }
+			if (!this.userInfo.user) {
+				this.$message({
+				showClose: true,
+				message: this.userInfo.message,
+				type: 'error',
+				onClose: () => {
+					this.loading = false
+					this.$router.push({
+					path: '/login'
+					})
+				}
+				});
+			} else {
+				this.user = this.userInfo.user
+				this.member = this.userInfo.member
+				this.memberID = this.userInfo.member.memberID
+				// 用户权限控制
+				let permissionMenu = this.userInfo.permissionMenu
+				Object.keys(this.permissionMenu).forEach((o, i)=>{
+				for(let k of permissionMenu) {
+					if (k.includes(o))
+					this.permissionMenu[o] = true
+					if (k.includes('SELL_ENQUIRY_PLATFORM'))
+					this.permissionMenu['SELL_ENQUIRY_PLATFORM'] = true
+				}
+				})
+
+				// 获取进口棉数量
+				this.$http.post('/wx/listing/statusStat?memberID=' + this.memberID).then((response) => {
+					console.log(response);
+					this.inpNum = response.data;
+				});
+				this.$http.post('/wx/spotSale/getSpotSaleCount').then((response) => {
+					// console.log(response);
+					this.orderNum=response.entity;
+				});
+				// 获取积分信息
+				this.$http.post('/wx/integral/user').then((response) => {
+					// console.log(response);
+					if (response.data)
+					this.integralInfo = response.data
+				});
+
+				this.loading = false
+			}
 		},
 		mounted() {
 			this.$http.post('/wx/member/cert/user/get').then((response) => {
@@ -277,7 +324,7 @@ import { mapState,  } from 'vuex'
                     userInfo: 'logout'
                   })
 									this.$router.push({
-										path: '/loginPass'
+										path: '/login'
 									})
 								}
 							});
@@ -327,16 +374,20 @@ import { mapState,  } from 'vuex'
 	}
 
 	.personal_top {
-		background: url(../../assets/img/personal_bg.png) no-repeat center;
-		background-size: cover;
+		background: url('~@/assets/icon/me_top.png') no-repeat;
+		background-size: 100% 100%;
 		height: 3.2rem;
 		text-align: center;
-		padding-top: 0.7rem;
+		padding-top: 0.2rem;
+		position: relative;
 
 		.head {
-			display: inline-block;
+			display: block;
 			width: 1rem;
+			float: left;
+			margin-left: .4rem;
 			position: relative;
+			margin-top: .16rem;
 
 			.head_w {
 				width: 1rem;
@@ -358,7 +409,84 @@ import { mapState,  } from 'vuex'
 				bottom: 0;
 			}
 		}
+		.info{
+			float: left;
+			width: calc(100% - 2rem);
+			margin-left: .4rem;
+			text-align: left;
+			line-height: 30px;
+		}
+		.pointsMall{
+			width: 100%;
+			height: calc(3.2rem - 1.6rem);
+			clear: both;
+			padding: .16rem 0px;
+		    .head_top{
 
+                nav{
+					width: calc(100% - .4rem);
+					display: flex;
+					padding: 0 .2rem;
+                    li{
+						list-style: none;
+						width: 33.3%;
+						height: 1.12rem;
+						line-height: .56rem;
+						padding: .2rem 0px;
+						text-align: center;
+						color: #fff;
+                        p{
+                            list-style: none;
+                            font-size: 0.26rem;
+                        }
+                        .weight{
+                            font-size: 0.4rem;
+                            font-weight: bolder;
+                        }
+                    }
+                    .xian{
+                        width: 33.3%;
+                        position: relative;
+                    }
+                    .xian::before{
+						content: " ";
+						position: absolute;
+						width: 1px;
+						height: .88rem;
+						background: #97D2D2;
+						top: .36rem;
+						right: 0;
+                    }
+                }
+            }
+		}
+		.pointsMall_button{
+			position: absolute;
+			top: 0.52rem;
+			right: 0px;
+			width: 1.6rem;
+			height: 0.68rem;
+			background: linear-gradient(90deg,#FF7C02 14%,#FF4523 100%);
+			text-align: center;
+			line-height: 0.64rem;
+			border-radius: .64rem 0 0 .64rem;
+			padding-left: .34rem;
+			color: #fff;
+			font-weight: bolder;
+			a{
+				color: #fff;
+			}
+		}
+		.pointsMall_button::before{
+			content: " ";
+			position: absolute;
+			top: .16rem;
+			left: .16rem;
+			width: .32rem;
+			height: .32rem;
+			background: url('~@/assets/icon/pointsMall.png') no-repeat;
+			background-size: 100% 100%;
+		}
 		.name {
 			color: #ffffff;
 			font-size: 0.5rem;

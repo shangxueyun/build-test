@@ -10,7 +10,7 @@
 				<div class="clear"></div>
 			</div>
 			<swiper class='deal_slide swiper-no-swiping' :options="swiperOption6" v-if="tradeStatusList!=''">
-			　　<swiper-slide v-for="item in tradeStatusList">
+			　　<swiper-slide v-for="(item,index) in tradeStatusList" :key="index">
 						<p class="name">{{item.batchID}}</p>
 						<p class="weight">{{item.amount}}t</p>
 						<p class="state">{{item.tradeStatus}}</p>

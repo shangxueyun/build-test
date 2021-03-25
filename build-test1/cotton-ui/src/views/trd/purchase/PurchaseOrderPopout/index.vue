@@ -69,7 +69,7 @@
         <el-table-column label="收货数量" align="center" header-align="center" prop="deliveryAmount">
           <template slot-scope="scope">
             <!-- newChargeAmount -->
-            <input class="numberNum" type="number" @blur="newChargeAmountBlur(scope.$index, scope.row, $event)" @input="newChargeAmount(scope.$index, scope.row, $event)" :value="scope.row.newChargeAmount" :disabled="scope.row.amount - scope.row.deliveryAmount <= 0?true:false" :max="scope.row.amount - scope.row.deliveryAmount" :min="0" style="width: 100%;">
+            <input class="numberNum" type="number" @blur="newChargeAmountBlur(scope.$index, scope.row, $event)" @input="newChargeAmount(scope.$index, scope.row, $event)" :value="scope.row.newChargeAmount" disabled :max="scope.row.amount - scope.row.deliveryAmount" :min="0" style="width: 100%;">
           </template>
         </el-table-column>
         <el-table-column label="价格（元/吨）" align="center" header-align="center" prop="price" />

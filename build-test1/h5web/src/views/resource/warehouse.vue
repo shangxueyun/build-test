@@ -5,7 +5,7 @@
 			<p>商城</p>
 		</div>
 		<div class="addHeight"></div>
-		<Search style='top:0.75rem'></Search>
+		<Search style='top:0.75rem' :hostUlr="'warehouse'" ref="Search_FinputTxt" :FinputTxt="FinputTxt" @searchListData="searchListData"></Search>
 		<!-- <div class="warehouse_tab">
 			<div class="ware_tab_inx active">新疆棉</div>
 			<div class="ware_tab_inx">进口棉$</div>
@@ -13,7 +13,7 @@
 			<div class="ware_tab_inx">地产棉</div>
 			<div class="clear"></div>
 		</div> -->
-		<div class="option_wrap" style="top: 1.81rem;">
+		<div class="option_wrap" style="top: 1.05rem;">
 			<div class="option" style="background: #fff;">
 				<!-- <span class="fl" :class="{ active:optActive == 1}" @click="clickActive(1)">排序<i></i></span> -->
 				<swiper class='search_tab fr' :options="swiperOption_tab">
@@ -57,10 +57,10 @@
 								<p class="top_num">{{item.batchID}}</p> 
 								<p class="top_lei">{{item.cottonTypeName}}</p>
 								<!-- <p class="top_grade">{{item.notes}}</p> -->
-								<p class="weight_two" style="line-height:.48rem">{{item.packnum}}包</p>
+								<p class="weight_two" style="line-height:.48rem"><span v-if="item.a">仓单：</span>{{item.packnum}}包</p>
 							</div>
 							
-						</div>
+						</div>	
 						<div class="res_con" @click="godetails(item.batchID,item.listingID)">
 							<div><span class="num">{{item.primaryColorName}}</span></div><i></i>
 							<div><span class="title">长度</span><br> <span class="num">{{item.lengthAvg}}</span></div><i></i>
@@ -81,7 +81,8 @@
 						</div>	
 						<div class="res_bot wrap" @click="godetails(item.batchID,item.listingID)">
 							<div class="res_price">
-								<p class="weight_two">公重<span>{{item.pubWeight}}</span> 吨</p>
+								<p class="weight_two" v-if="item.amountType!=8">公重<span>{{item.pubWeight}}</span> 吨</p>
+								<p class="weight_two" v-if="item.amountType==8">仓重<span>{{item.amount}}</span> 吨</p>
 								<p class="top_date">{{item.listingDate.substring(5,11)}}</p>
 							</div>
 							<input class="res_btn" v-if="item.cartID==0&&item.status == 0" type="button" value="添加询盘" @click.stop="joinCart(item.listingID,item);">
@@ -97,14 +98,12 @@
 					<div class="status">
 						<img v-if="item.status != 0" src="../../assets/img/status1.png" alt="">
 						<p v-if="item.status != 0">已售</p>
-						<img v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是' && !item.inPointPriceValue" src="../../assets/img/status2.png" alt="">
-						<p v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是' && !item.inPointPriceValue">点价中</p>
-						<img v-if="item.status == 0&&item.inPointPrice && item.inPointPrice == '是' && item.inPointPriceValue" src="../../assets/img/status3.png" alt="">
-						<p v-if="item.status == 0&&item.inPointPrice && item.inPointPrice == '是' && item.inPointPriceValue">点价中{{item.inPointPriceValue}}</p>
+						<img v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是'" src="../../assets/img/status2.png" alt="">
+						<p v-if="item.status == 0&&item.inPointPrice && item.inPointPrice =='是'">点价中</p>
 					</div>
 				</li>
 			</ul>
-			<p v-if="!resshow" class="more_btn">{{moreText}}</p>
+			<p v-if="!resshow && FinputTxt == ''" class="more_btn">{{moreText}}</p>
 			<div v-if="resshow" class="noRes">
 				<img src="../../assets/img/noRes.png" alt="">
 				<p>当前条件没有对应的资源，换个指标搜索吧。</p>
@@ -153,14 +152,14 @@
 					<p class="save_title" style="margin-left: .18rem;">存放地:</p>
 					<!-- 城市父级循环不在点击范围 -->
 					<template v-if="address_list.length">
-					<place-of-origin ref="placeOfOrigin" :paramsSidings="paramsSidings" v-model="address_list" :type-num="3" @addparamsCall="addparamsCallplace"></place-of-origin>
+					<place-of-origin ref="placeOfOrigin" :ResetFig="ResetFig" :paramsSidings="paramsSidings" v-model="address_list" :type-num="3" @addparamsCall="addparamsCallplace"></place-of-origin>
 					</template>
 				</div>
 				<div class="opt_botl" style="padding: 0">
 					<p class="save_title" style="margin-left: .18rem;">产地:</p>
 					<!-- 城市父级循环不在点击范围 -->
 					<template v-if="yieldly_list.length">
-					<place-of-origin v-model="yieldly_list" :type-num="6" @addparamsCall="addparamsCallplace"></place-of-origin>
+					<place-of-origin ref="placeOfOrigin1" v-model="yieldly_list" :ResetFig="ResetFig" :type-num="6" @addparamsCall="addparamsCallplace"></place-of-origin>
 					</template>
 				</div>
 
@@ -226,7 +225,7 @@
 				<div class="opt_slide dan">
 					<p class="slide_bt fl">整齐度</p>
 					<div class="block slide_block fl" @touchstart="showtool('show6')">
-						<el-slider v-model="value6" range :min="780" :max="900" :marks="marks6" @change="addparams" :format-tooltip="formatTooltip"
+						<el-slider v-model="value6" ref="isSee6" range :min="780" :max="900" :marks="marks6" @change="addparams" :format-tooltip="formatTooltip"
 							:show-tooltip="isSee6">
 						</el-slider>
 					</div>
@@ -241,8 +240,9 @@
 					<div class="clear"></div>
 				</div> -->
 			</div>
-			<div class="slide_click">
+			<div class="slide_click" style="display: flex;">
 				<!-- <input class="chongzhi" type="button" value="点击重置" @click="clearSelect"> -->
+				<div class="reset" @click="resetclose">清空 <i></i></div>
 				<input class="wancheng" id="wancheng" type="button" value="确定筛选" @click="addparams('noshow')">
 				<input class="chongzhi" type="button" value="添加到需求定制" @click="save_top">
 			</div>
@@ -260,14 +260,16 @@
 </template>
 
 <script>
-  // import wx from 'weixin-js-sdk'
-  import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
+	// import wx from 'weixin-js-sdk'
+	import PlaceOfOrigin from '@/components/PlaceOfOrigin/index'
 	import Search from '@/components/search.vue'
+	import { getQueryObject } from '@/utils'
+	import { mapState } from 'vuex'
 	// import warehouseList from '@/components/warehouse/warehouseList.vue'
 	export default {
 		components: {
-      Search,
-      PlaceOfOrigin
+			Search,
+			PlaceOfOrigin
 			// warehouseList
 		},
 		data: function() {
@@ -277,6 +279,8 @@
 				optActive: '',
 				warehouseList: '',
 				paramsSidings: 0,
+				FinputTxt: '',
+				ResetFig: 0,
 				importList:'',
 				loading: true,
 				ifAsc: true,
@@ -400,6 +404,12 @@
 					flag: false,
 					filter: 'primaryColor',
 					value: 24
+				}, {
+					id: 14,
+					name: '无',
+					flag: false,
+					filter: 'primaryColor',
+					value: 0
 				}],
 				mhlx_items_list: [{
 					id: 1,
@@ -566,6 +576,10 @@
 				},
 			}
 		},
+		computed: mapState({
+			// 箭头函数可使代码更简练
+			shoppingMallInfo: state => state.pageDataReturn.shoppingMallInfo,
+		}),
 		created() {
 			// alert(window.location.href);
 			//获取订单列表
@@ -585,7 +599,8 @@
 			// 	// console.log(response);
 			// 	this.save_list = response.entity;
 			// })
-		     window.addEventListener('scroll', this.onScroll);
+			 window.addEventListener('scroll', this.onScroll);
+			//  shoppingMallInfo
 		},
 
 		//获取资订单详情
@@ -647,6 +662,8 @@
 						vm.save_list = response.entity;
 						vm.searchNameAction()
 					})
+					// if (vm.shoppingMallInfo)
+					// vm.search_list('routerData');
 				}
 				vm.$http.get('/wx/shop/getMixListing').then((response) => {
 					// console.log(response);
@@ -802,12 +819,12 @@
 				})
 				}
 				this.address_list = NewArr;
-						this.address_list.unshift({
-							id: 0,
-							name: '不限',
-							flag: true,
-							filter: '',
-							value: ''
+				this.address_list.unshift({
+					id: 0,
+					name: '不限',
+					flag: true,
+					filter: '',
+					value: ''
 				})
 			});
 			// 获取城市 产地
@@ -1015,7 +1032,7 @@
 
 
 			},
-			search_list(index,searchID, flg) {
+			search_list(index,searchID, flg, paramsData) {
 				
 				if (!flg)
 				this.search_ID=searchID;
@@ -1023,6 +1040,11 @@
 				this.loading = true;
 				let params = new URLSearchParams();
 				var save_inx;
+				
+				if (paramsData) {
+					save_inx = paramsData
+				}
+				else
 				if(index=='params'){
 					 save_inx = this.save_setone;
 					 let obj, key
@@ -1038,15 +1060,39 @@
 					} else {
 						this.save_list[key].flag = false
 					}
-				}else{
+				}else if(index=='routerData'){
+					this.search_ID = ''
+					this.historyID = ''
+					this.searchName = ''
+					if (this.shoppingMallInfo && !searchID)
+					save_inx = this.shoppingMallInfo
+					else
+					save_inx = {}
+				} else {
 					save_inx = this.save_list[index];
-					this.searchName = save_inx.searchName
-					if (this.search_ID == this.save_list[index].searchID) {
-						this.save_list[index].flag = true
+					if (this.searchName == save_inx.searchName) {
+						if (this.save_list[index].flag == true) {
+							this.searchName = ''
+							save_inx = ''
+							this.save_list[index].flag = false
+						} else {
+							this.searchName = save_inx.searchName
+							this.save_list[index].flag = true
+						}
 					} else {
-						this.save_list[index].flag = false
+						if (this.search_ID == this.save_list[index].searchID) {
+							this.save_list[index].flag = true
+						} else {
+							this.save_list[index].flag = false
+						}
+						this.searchName = save_inx.searchName
 					}
 				}
+
+				this.FinputTxt = ''
+				this.$nextTick(()=>{
+					this.$refs.Search_FinputTxt.updateValue('')
+				})
 
 				// 放入参数
 				if (save_inx.optimization) {
@@ -1349,7 +1395,82 @@
 					window.scrollTo(0, 0);
 				})
 			},
-
+			resetclose (flg) {
+				this.value=[260, 330]
+				this.value2=[240, 330];
+				this.value3=[30, 60];
+				this.value4=[0, 60];
+				this.value5=[40, 110];
+        		this.value6=[780, 900];
+				this.isSee = false;
+				this.mhlx_items_list.forEach(function(i) {
+					i.flag = false;
+				});
+				this.Data_list.forEach(function(i) {
+					i.flag = false;
+				});
+				this.address_list.forEach(function(i,index) {
+					if(index==0){
+						i.flag = true;
+					}else{
+						i.flag = false;
+					}
+				});
+				this.yieldly_list.forEach(function(i,index) {
+					if(index==0){
+						i.flag = true;
+					}else{
+						i.flag = false;
+					}
+				});
+				this.lx_items_list.forEach(function(i,index) {
+					if(index==0){
+						i.flag = true;
+					}else{
+						i.flag = false;
+					}
+				});
+				this.ysj_items_list.forEach(function(i,index) {
+					if(index==0){
+						i.flag = true;
+					}else{
+						i.flag = false;
+					}
+				});
+				this.mhlx_items_list.forEach(function(i,index){
+					i.flag = false;
+				});
+				this.paramsSidings = 0
+				this.$nextTick(() => {
+					this.$refs.placeOfOrigin.updateParamsSidings(0)
+					this.$refs.placeOfOrigin.ResetFuc(1)
+					this.$refs.placeOfOrigin1.ResetFuc(1)
+				})
+				this.ResetFig = 1
+				this.isSee1 = false;
+				this.isSee2 = false;
+				this.isSee3 = false;
+				this.isSee4 = false;
+				this.isSee5 = false;
+				this.isSee6 = false;
+				if (!flg)
+				this.$http.post('/wx/listing/getListingFineList?&order=price&asc=true' ).then((response) => {
+					this.warehouseList = response.entity.list;
+					this.totalPage = response.entity.totalPage;
+					this.pageCurrent = 1;
+					// console.log(response);
+					this.loading = false;
+					this.pagesize = response.entity.pageSize;
+					this.pageNum = 1;
+					this.paramsBoth = '';
+					if (response.entity.totalRow == 0) {
+						this.resshow = true;
+					} else {
+						this.resshow = false;
+					}
+					window.scrollTo(0, 0);
+				})
+			},
 
 
 			//滑块小标隐藏
@@ -1384,6 +1505,8 @@
 			},
 			//上拉加载
 			onScroll() {
+				if (this.FinputTxt != '')
+				return false
 				let innerHeight = document.querySelector('#app').clientHeight;
 				let outerHeight = document.documentElement.clientHeight;
 				let scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
@@ -1399,19 +1522,17 @@
 						// 	this.loading = false;
 						// 	this.pageflag=true;
 						// })
+							this.$http.post('/wx/listing/getListingFineList?' + this.paramsBoth + '&pageNum=' + this.pageNum + '&order=price&asc=true').then((response) => {
+								let ListTest = response.entity.list;
+								this.warehouseList = this.warehouseList.concat(ListTest);
+								this.totalPage = response.entity.totalPage;
+								this.pageCurrent = response.entity.pageCurrent;
+								// console.log(response);
+								this.loading = false;
+								this.pageflag = true;
+							})
 
-						this.$http.post('/wx/listing/getListingFineList?' + this.paramsBoth + '&pageNum=' + this.pageNum + '&order=price&asc=true').then((response) => {
-							let ListTest = response.entity.list;
-							this.warehouseList = this.warehouseList.concat(ListTest);
-							this.totalPage = response.entity.totalPage;
-							this.pageCurrent = response.entity.pageCurrent;
-							// console.log(response);
-							this.loading = false;
-							this.pageflag = true;
-						})
-
-						this.moreText = "下拉加载更多";
-
+							this.moreText = "下拉加载更多";	
 					} else if (this.pageCurrent >= this.totalPage) {
 						this.moreText = "全部加载完成";
 					}
@@ -1613,7 +1734,8 @@
 			},
 			// 传参获取列表
 			addparams(i, value, index, z, sumStr) {
-				this.search_ID='';
+				this.search_ID=''
+				this.searchName = ''
 				// 参数设置
 				let listingType = new Array();
 				let optimization;
@@ -1878,9 +2000,19 @@
 				this.cancelRequest();
 				var that = this;
 				//获取列表信息
+
+				this.$store.commit({
+					type: 'pageDataReturn_SET',
+					key: 'shoppingMallInfo',
+					shoppingMallInfo: getQueryObject(this.params.toString())
+				})
 				this.IfSubmitAjax(params)
 			},
 			IfSubmitAjax (params) {
+				this.FinputTxt = ''
+				this.$nextTick(()=>{
+					this.$refs.Search_FinputTxt.updateValue(this.FinputTxt)
+				})
 				let that = this
 				//获取列表信息
 				this.$http.post('/wx/listing/getListingFineList?' + params,null,{
@@ -1939,6 +2071,58 @@
 				this.search_list(o, obj.searchID, true)
 			}
 		},
+		// 搜索列表
+		searchListData (obj, type, inputTxt) {
+			if (type || inputTxt == '') {
+				debugger
+				this.FinputTxt = ''
+				// 重置需求定制筛选
+				// this.searchName = ''
+				// this.resetclose(true)
+				let params = new URLSearchParams();
+				let obj = {}
+				if (this.searchName) {
+					this.save_list.forEach((v, i) => {
+						if (this.searchName == v.searchName) {
+							v.flag = true
+							obj = v
+						}
+					})
+					// 需求回显
+					this.search_list(obj, obj.searchID, false, obj)
+				}
+				else {
+					this.search_list(obj, '', false, obj)
+					this.$http.post('/wx/listing/getListingFineList?&order=price&asc=true').then((response) => {
+						this.warehouseList = response.entity.list;
+						this.totalPage = response.entity.totalPage;
+						this.pageCurrent = 1;
+						// console.log(response);
+						this.loading = false;
+						this.pagesize = response.entity.pageSize;
+						this.pageNum = 1;
+						this.paramsBoth = params;
+						if (response.entity.totalRow == 0) {
+							this.resshow = true;
+						} else {
+							this.resshow = false;
+						}
+						window.scrollTo(0, 0);
+					})
+				}
+			} else {
+				this.FinputTxt = inputTxt
+				// 重置需求定制筛选
+				this.searchName = ''
+				this.resetclose(true)
+				this.save_list.forEach((v, i) => {
+					v.flag = false
+				})
+
+				this.resshow = false
+				this.warehouseList = obj
+			}
+		},
 		// 添加询盘计数
 		getstore (type) {
 			// 获取
@@ -1950,8 +2134,13 @@
 				UserEnquiries: ( num ? num : 0 ) + type
 			})
 			// 存储
-			this.$store.dispatch('OPREATING_INFO_SET_LOA')
+			this.$store.dispatch('CLOSE_SESSIONSTORAGE')
 		}
+		},
+		beforeRouteLeave(to, form, next) {
+			// 离开需要卸载滚动事件监听
+			window.removeEventListener("scroll", this.onScroll, false);
+			next()
 		}
 	}
 </script>
@@ -2046,17 +2235,39 @@
 					color: #ffffff;
 					display: inline-block;
 					border: 0;
-					width: 50%;
+					width: 32%;
 					height: 50px;
-					font-size: .32rem;
+					font-size: .3rem;
 				}
 
 				.chongzhi {
+					width: 40%;
 					background: #fd7320;
 				}
 
 				.wancheng {
+					width: 35%;
 					background: #14bab4;
+				}
+				.reset{
+					width: 25%;
+					color: #14BAB4;
+					padding-left: 20px;
+					background: #E9F6F6;
+					position: relative;
+					display: inline-block;
+					line-height: 50px;
+					font-size: 0.3rem;
+					i{
+						position: absolute;
+						background: url('../../assets/icon/delete.png') no-repeat;
+						background-size: 100%;
+						width: 20px;
+						height: 24px;
+						top: 14px;
+						left: 17%;
+						z-index: 1;
+					}
 				}
 			}
 		}
@@ -2566,7 +2777,7 @@
 	}
 
 	.warehouseList {
-		padding-top: 1.95rem;
+		padding-top: 1.2rem;
 		margin-bottom: 3rem;
 	}
 

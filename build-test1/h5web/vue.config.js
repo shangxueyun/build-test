@@ -109,6 +109,9 @@ module.exports = {
       }
       return config
     }
+    config.resolve.alias
+      .set("@", resolve("src")) /* 别名配置 */
+    config.optimization.runtimeChunk("single");
   },
 
   // 配置 webpack-dev-server 行为。

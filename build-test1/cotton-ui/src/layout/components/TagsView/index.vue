@@ -49,7 +49,11 @@ export default {
     }
   },
   watch: {
-    $route() {
+    $route(res, o) {
+      if (o.path == '/product/AddEdit') {
+        this.closeSelectedTag(o)
+      }
+      this.$route
       this.addTags()
       this.moveToCurrentTag()
     },
